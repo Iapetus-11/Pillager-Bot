@@ -1,3 +1,70 @@
 {
-  "discord_token": "discord token"
+  "discord_token": "discord token",
+  "welcoming": {
+    "guilds": {
+      593954944059572235: {
+        "welcome": true,
+        "farewell": true,
+        "channel": 593954944059572237
+      },
+      641117791272960031: {
+        "welcome": true,
+        "farewell": true,
+        "channel": 641117791272960039
+      },
+      718983582898585602: {
+        "welcome": true,
+        "farewell": false,
+        "channel": 718983583519473719
+      }
+    },
+    "welcomes": [
+      "Welcome {0}!",
+      "We've been expecting you {0}...",
+      "Everyone say hi to {0}!",
+      "Everyone welcome {0}!",
+      "Say hi to {0}!",
+      "{0} just joined!",
+      "{0}, welcome!",
+      "Everyone say hello to {0}!",
+      "Hello {0}!",
+      "We're glad to have you, {0}!",
+      "Guess what! {0} is here!",
+      "Ayyy, {0} is here!",
+      "Welcome {0}, we're glad you're here!",
+      "Welcome {0}!",
+      "Hello there {0}!",
+      "Glad to have you here {0}!",
+      "Welcome {0}!",
+      "We've been expecting you {0}...",
+      "Everyone say hi to {0}!",
+      "Everyone welcome {0}!",
+      "Say hi to {0}!",
+      "{0} just joined!",
+      "{0}, welcome!",
+      "Everyone say hello to {0}!",
+      "Hello {0}!",
+      "We're glad to have you, {0}!",
+      "Guess what! {0} is here!",
+      "Ayyy, {0} is here!",
+      "Welcome {0}, we're glad you're here!",
+      "Welcome {0}!",
+      "Hello there {0}!",
+      "Glad to have you here {0}!",
+      "Good to see ya, {0}!",
+      "Welcome {0}, it's nice to see ya!",
+      "Nice to see you, {0}!",
+      "A wild {0} has appeared!",
+      "{0} just joined!",
+      "{0} just joined the party!",
+      "Welcome, {0}, I hope you brought pizza!",
+      "Welcome, {0}, I hope you brought cupcakes!",
+      "Welcome, {0}, I hope you brought hugs for everyone!",
+      "{0} just showed up!",
+      "Welcome {0}, glad you're here!",
+      "{0} is here!",
+      "{0} just showed up!",
+      "Yay! You made it {0}!"
+    ]
+  }
 }
