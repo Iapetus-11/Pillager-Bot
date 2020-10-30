@@ -7,6 +7,8 @@ class Events(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
+        self.conf = bot.conf
+
     @commands.Cog.listener()
     async def on_ready(self):
         print('\n CONNECTED \n')
@@ -17,11 +19,11 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        pass
+        if self.conf.welcoming.guilds.get(member.guild.id)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, e):
-                for e_type in (commands.CommandNotFound, commands.NotOwner, discord.errors.Forbidden,):
+        for e_type in (commands.CommandNotFound, commands.NotOwner, discord.errors.Forbidden,):
             if isinstance(e, e_type) or isinstance(e.__dict__.get('original'), e_type):
                 return
 
