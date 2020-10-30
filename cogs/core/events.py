@@ -24,7 +24,11 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        pass
+        g_conf = self.conf.welcoming.guilds.get(member.guild.id)
+
+        if g_conf is not None:
+            if g_conf.farewell:
+                await ctx.send(f'Goodbye, {member.mention} ({member})')
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, e):
