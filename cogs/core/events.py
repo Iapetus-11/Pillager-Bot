@@ -1,6 +1,7 @@
 from discord.ext import commands
 import traceback
 import discord
+import random
 
 
 class Events(commands.Cog):
@@ -15,11 +16,15 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        pass
+        g_conf = self.conf.welcoming.guilds.get(member.guild.id)
+
+        if g_conf is not None:
+            if g_conf.welcome:
+                await ctx.send(random.choice(self.conf.welcoming.welcomes).format(member.mention))
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        if self.conf.welcoming.guilds.get(member.guild.id)
+        pass
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, e):
@@ -28,15 +33,6 @@ class Events(commands.Cog):
                 return
 
         if isinstance(e, commands.CommandOnCooldown):
-            if ctx.command.name == 'mine':
-                if await self.db.fetch_item(ctx.author.id, 'Efficiency I Book') is not None:
-                    e.retry_after -= .5
-
-                if 'Haste II Potion' in self.d.chuggers.get(ctx.author.id, []):
-                    e.retry_after -= 1
-                elif 'Haste I Potion' in self.d.chuggers.get(ctx.author.id, []):
-                    e.retry_after -= .5
-
             seconds = round(e.retry_after, 2)
 
             if seconds <= .05:
