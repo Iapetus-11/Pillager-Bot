@@ -20,7 +20,7 @@ class Events(commands.Cog):
 
         if g_conf is not None:
             if g_conf.welcome:
-                await ctx.send(random.choice(self.conf.welcoming.welcomes).format(member.mention))
+                await self.bot.get_channel(g_conf.channel).send(random.choice(self.conf.welcoming.welcomes).format(member.mention))
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
@@ -28,7 +28,7 @@ class Events(commands.Cog):
 
         if g_conf is not None:
             if g_conf.farewell:
-                await ctx.send(f'Goodbye, {member.mention} ({member})')
+                await self.bot.get_channel(g_conf.channel).send(f'Goodbye, {member.mention} ({member})')
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, e):
