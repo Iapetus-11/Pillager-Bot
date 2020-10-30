@@ -16,7 +16,7 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        g_conf = self.conf.welcoming.guilds.get(member.guild.id)
+        g_conf = self.conf.welcoming.guilds.get(str(member.guild.id))
 
         if g_conf is not None:
             if g_conf.welcome:
@@ -24,7 +24,7 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
-        g_conf = self.conf.welcoming.guilds.get(member.guild.id)
+        g_conf = self.conf.welcoming.guilds.get(str(member.guild.id))
 
         if g_conf is not None:
             if g_conf.farewell:
