@@ -2,17 +2,17 @@
   "discord_token": "discord token",
   "welcoming": {
     "guilds": {
-      593954944059572235: {
+      "593954944059572235": {
         "welcome": true,
         "farewell": true,
         "channel": 593954944059572237
       },
-      641117791272960031: {
+      "641117791272960031": {
         "welcome": true,
         "farewell": true,
         "channel": 641117791272960039
       },
-      718983582898585602: {
+      "718983582898585602": {
         "welcome": true,
         "farewell": false,
         "channel": 718983583519473719
