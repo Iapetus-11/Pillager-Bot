@@ -22,6 +22,9 @@ class Events(commands.Cog):
             if g_conf.welcome:
                 await self.bot.get_channel(g_conf.channel).send(random.choice(self.conf.welcoming.welcomes).format(member.mention))
 
+            if g_conf.role_id:
+                await member.add_roles(member.guild.get_role(g_conf.role_id))
+
     @commands.Cog.listener()
     async def on_member_remove(self, member):
         g_conf = self.conf.welcoming.guilds.get(str(member.guild.id))
