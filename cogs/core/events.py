@@ -31,6 +31,25 @@ class Events(commands.Cog):
                 await self.bot.get_channel(g_conf.channel).send(f'Goodbye, {member.mention} ({member})')
 
     @commands.Cog.listener()
+    async def on_message(self, m):
+        if 'discord.gg/' in m.content.lower() or 'invite.gg' in m.content.lower() or 'dsc.gg' in m.content.lower():
+            if not m.author.permissions_in(m.channel).administrator:
+                await m.delete()
+                await m.channel.send(embed=discord.Embed(description='Invite links aren\'t allowed here.'))
+
+    @commands.Cog.listener()
+    async def on_message_edit(self, m_b, m):
+        if 'discord.gg/' in m.content.lower() or 'invite.gg' in m.content.lower() or 'dsc.gg' in m.content.lower():
+            if not m.author.permissions_in(m.channel).administrator:
+                await m.delete()
+                await m.channel.send(embed=discord.Embed(description='Invite links aren\'t allowed here.'))
+
+    @commands.Cog.listener()
+    async def on_message_delete(self, m):
+        if m.guild.id == 641117791272960031: # villager bot support server
+            await ctx.send(embed=discord.Embed(description=m.content, title=f'Message in {m.channel} by {m.author} ({m.author.id})'))
+
+    @commands.Cog.listener()
     async def on_command_error(self, ctx, e):
         for e_type in (commands.CommandNotFound, commands.NotOwner, discord.errors.Forbidden,):
             if isinstance(e, e_type) or isinstance(e.__dict__.get('original'), e_type):
