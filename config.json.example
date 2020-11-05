@@ -5,17 +5,20 @@
       "593954944059572235": {
         "welcome": true,
         "farewell": true,
-        "channel": 593954944059572237
+        "channel": 593954944059572237,
+        "role_id": 721926264964776036
       },
       "641117791272960031": {
         "welcome": true,
         "farewell": true,
-        "channel": 641117791272960039
+        "channel": 641117791272960039,
+        "role_id": null
       },
       "718983582898585602": {
         "welcome": true,
         "farewell": false,
-        "channel": 718983583519473719
+        "channel": 718983583519473719,
+        "role_id": 722862171943337984
       }
     },
     "welcomes": [
