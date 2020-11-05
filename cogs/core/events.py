@@ -50,7 +50,7 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, m):
         if m.guild.id == 641117791272960031: # villager bot support server
-            await self.bot.get_channel(712657290896867408).send(embed=discord.Embed(description=m.content, title=f'Message in {m.channel} by {m.author} ({m.author.id})'))
+            await self.bot.get_channel(712657290896867408).send(embed=discord.Embed(description=m.content, title=f'Message in {m.channel} by {m.author}'))
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, e):
