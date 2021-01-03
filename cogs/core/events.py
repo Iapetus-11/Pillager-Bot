@@ -13,6 +13,7 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print('\n CONNECTED \n')
+        await self.bot.change_presence(activity=discord.Game(name='Raid Villages'))
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
