@@ -36,17 +36,21 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, m):
-        if 'discord.gg/' in m.content.lower() or 'invite.gg' in m.content.lower() or 'dsc.gg' in m.content.lower():
-            if not m.author.permissions_in(m.channel).administrator:
-                await m.delete()
-                await m.channel.send(embed=discord.Embed(description='Invite links aren\'t allowed here.'))
+        for iurl in ('discord.gg/', 'invite.gg/', 'dsc.gg/', 'dsc.lol/', 'discord.com/invite/'):
+            if iurl in m.content.lower():
+                if not m.author.permissions_in(m.channel).administrator:
+                    await m.delete()
+                    await m.channel.send(embed=discord.Embed(description='Invite links aren\'t allowed here.'))
+                    return
 
     @commands.Cog.listener()
     async def on_message_edit(self, m_b, m):
-        if 'discord.gg/' in m.content.lower() or 'invite.gg' in m.content.lower() or 'dsc.gg' in m.content.lower():
-            if not m.author.permissions_in(m.channel).administrator:
-                await m.delete()
-                await m.channel.send(embed=discord.Embed(description='Invite links aren\'t allowed here.'))
+        for iurl in ('discord.gg/', 'invite.gg/', 'dsc.gg/', 'dsc.lol/', 'discord.com/invite/'):
+            if iurl in m.content.lower():
+                if not m.author.permissions_in(m.channel).administrator:
+                    await m.delete()
+                    await m.channel.send(embed=discord.Embed(description='Invite links aren\'t allowed here.'))
+                    return
 
     @commands.Cog.listener()
     async def on_message_delete(self, m):
