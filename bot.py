@@ -8,13 +8,10 @@ bot = commands.AutoShardedBot(
     intents=discord.Intents.all()
 )
 
-with open('config.json', 'r') as conf:
+with open("config.json", "r") as conf:
     bot.conf = cj.load(conf)
 
-bot.cog_list = [
-    'cogs.core.events',
-    'cogs.cmds.owner'
-]
+bot.cog_list = ["cogs.core.events", "cogs.cmds.owner"]
 
 for cog in bot.cog_list:
     bot.load_extension(cog)
