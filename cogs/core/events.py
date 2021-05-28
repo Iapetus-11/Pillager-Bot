@@ -52,6 +52,12 @@ class Events(commands.Cog):
                     await m.channel.send(embed=discord.Embed(description='Invite links aren\'t allowed here.'))
                     return
 
+        g_conf = self.conf.welcoming.guilds.get(str(m.guild.id))
+
+        if g_conf.log_channel:
+            log_channel = self.bot.get_channel(g_conf.log_channel)
+            await log_channel.send(embed=discord.Embed(description=m_b.content, title=f'Message in {m.channel} edited by {m.author} from'))
+
     @commands.Cog.listener()
     async def on_message_delete(self, m):
         g_conf = self.conf.welcoming.guilds.get(str(m.guild.id))
