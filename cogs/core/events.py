@@ -40,7 +40,6 @@ class Events(commands.Cog):
     async def on_member_ban(self, guild, user):
         for guild_id in self.conf.welcoming.guilds.keys():
             if guild_id != guild.id:
-                print(guild_id)
                 g = self.bot.get_guild(int(guild_id))
 
                 try:
