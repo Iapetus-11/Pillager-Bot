@@ -5,8 +5,7 @@ import discord
 bot = commands.AutoShardedBot(
     command_prefix='$',
     case_insensitive=True,
-    intents=discord.Intents.all(),
-    help_command=None
+    intents=discord.Intents.all()
 )
 
 with open('config.json', 'r') as conf:
