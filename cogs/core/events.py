@@ -54,7 +54,7 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, m):
-        g_conf = self.conf.welcoming.guilds.get(str(member.guild.id))
+        g_conf = self.conf.welcoming.guilds.get(str(m.guild.id))
 
         if g_conf.log_channel:
             log_channel = self.bot.get_channel(g_conf.log_channel)
