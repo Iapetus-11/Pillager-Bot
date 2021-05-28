@@ -35,6 +35,17 @@ class Events(commands.Cog):
                 await self.bot.get_channel(g_conf.channel).send(f'Goodbye, {member.mention} ({member})')
 
     @commands.Cog.listener()
+    async def on_member_ban(self, guild, user):
+        for guild_id in self.conf.welcoming.guilds.keys():
+            if guild_id != guild.id:
+                g = self.bot.get_guild(int(guild_id))
+
+                try:
+                    await g.ban(user, reason=f"User was banned from {guild}")
+                except Exception as e:
+                    print(e)
+
+    @commands.Cog.listener()
     async def on_message(self, m):
         for iurl in ('discord.gg/', 'invite.gg/', 'dsc.gg/', 'dsc.lol/', 'discord.com/invite/'):
             if iurl in m.content.lower():
