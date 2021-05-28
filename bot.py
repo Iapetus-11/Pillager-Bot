@@ -2,11 +2,7 @@ from discord.ext import commands
 import classyjson as cj
 import discord
 
-bot = commands.AutoShardedBot(
-    command_prefix='$',
-    case_insensitive=True,
-    intents=discord.Intents.all()
-)
+bot = commands.AutoShardedBot(command_prefix="$", case_insensitive=True, intents=discord.Intents.all())
 
 with open("config.json", "r") as conf:
     bot.conf = cj.load(conf)
