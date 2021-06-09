@@ -63,7 +63,7 @@ class Events(commands.Cog):
     async def on_message_edit(self, m_b, m):
         if m.author.bot:
             return
-            
+
         for iurl in ("discord.gg/", "invite.gg/", "dsc.gg/", "dsc.lol/", "discord.com/invite/"):
             if iurl in m.content.lower():
                 if not m.author.permissions_in(m.channel).administrator:
