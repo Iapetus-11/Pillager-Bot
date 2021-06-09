@@ -49,6 +49,9 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, m):
+        if m.author.bot:
+            return
+
         for iurl in ("discord.gg/", "invite.gg/", "dsc.gg/", "dsc.lol/", "discord.com/invite/"):
             if iurl in m.content.lower():
                 if not m.author.permissions_in(m.channel).administrator:
@@ -58,6 +61,9 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_edit(self, m_b, m):
+        if m.author.bot:
+            return
+            
         for iurl in ("discord.gg/", "invite.gg/", "dsc.gg/", "dsc.lol/", "discord.com/invite/"):
             if iurl in m.content.lower():
                 if not m.author.permissions_in(m.channel).administrator:
