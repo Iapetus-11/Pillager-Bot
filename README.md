@@ -1,2 +1,3 @@
 # Pillager-Bot
-A Moderation / Utility bot for my servers
+A moderation and utility bot for my servers
+
