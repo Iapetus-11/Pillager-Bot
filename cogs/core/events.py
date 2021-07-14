@@ -86,7 +86,7 @@ class Events(commands.Cog):
         if g_conf.log_channel:
             log_channel = self.bot.get_channel(g_conf.log_channel)
             await log_channel.send(
-                embed=discord.Embed(description=m.content, title=f"Message in {m.channel} deleted by {m.author}", url=m.jump_url)
+                embed=discord.Embed(description=m.content, title=f"Message in {m.channel} deleted by {m.author}")
             )
 
     @commands.Cog.listener()
