@@ -26,7 +26,9 @@ class Events(commands.Cog):
                 )
 
             if g_conf.role_id:
-                await member.add_roles(member.guild.get_role(g_conf.role_id))
+                r = member.guild.get_role(g_conf.role_id)
+                if r:
+                    await member.add_roles(r)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
