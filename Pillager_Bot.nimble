@@ -5,7 +5,7 @@ author        = "Milo Weinberg"
 description   = "A moderation and utility Discord bot for my servers"
 license       = "MIT"
 srcDir        = "src"
-bin           = @["Pillager_Bot"]
+bin           = @["bot"]
 
 
 # Dependencies
