@@ -1,0 +1,23 @@
+name: Prettify Nim Code
+
+on: [push]
+
+jobs:
+  autonimpretty:
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+            ref: ${{ github.head_ref }}
+
+      - uses: jiro4989/setup-nim-action@v1
+
+      - name: autonimpretty
+        continue-on-error: true
+        run: |
+          for f in $(find ./ -name '*.nim'); do nimpretty --maxLineLen:100 --indent:4 $f; done;
+          git config --global user.name github-actions
+          git config --global user.email '${GITHUB_ACTOR}@users.noreply.github.com'
+          git commit -am "nimpretty"
+          git push
