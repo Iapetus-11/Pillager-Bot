@@ -25,7 +25,8 @@ proc filterMessage(s: Shard, msg: Message) {.async.} =
         if inviteUrlPre in contentLower:
             if permAdministrator notin perms.allowed:
                 await client.api.deleteMessage(msg.channel_id, msg.id, "Contained invite link.")
-                discard await client.api.sendMessage(msg.channel_id, &"{@(msg.author)} invite links aren't allowed here.")
+                discard await client.api.sendMessage(msg.channel_id,
+                        &"{@(msg.author)} invite links aren't allowed here.")
                 return
 
 proc onReady(s: Shard, r: Ready) {.event(client).} =
