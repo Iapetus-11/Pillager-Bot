@@ -14,14 +14,19 @@ addHandler(logger)
 
 var cmd = newHandler(client)
 
-proc filterMessage(msg: Message) {.async.} =
-    let contentLower = msg.content.toLowerAscii()
+proc filterMessage(s: Shard, msg: Message) {.async.} =
+    let
+        contentLower = msg.content.toLowerAscii()
+        guild = s.cache.guilds[msg.guild_id.get()]
+        channel = s.cache.guildChannels[msg.channel_id]
+        perms = guild.computePerms(msg.member.get(), channel)
 
     for inviteUrlPre in INVITE_URLS:
         if inviteUrlPre in contentLower:
-            if not msg.member.get().permissions.contains(PermissionFlags.permAdministrator):
+            if permAdministrator notin perms.allowed:
                 await client.api.deleteMessage(msg.channel_id, msg.id, "Contained invite link.")
                 discard await client.api.sendMessage(msg.channel_id, &"{@(msg.author)} invite links aren't allowed here.")
+                return
 
 proc onReady(s: Shard, r: Ready) {.event(client).} =
     await s.updateStatus(@[ActivityStatus(name: STATUS_NAME, kind: ActivityType.atPlaying)])
@@ -36,11 +41,11 @@ proc messageCreate(s: Shard, msg: Message) {.event(client).} =
     if handledCommand:
         debug(&"{$msg.author}: {msg.content}")
 
-    await filterMessage(msg)
+    await filterMessage(s, msg)
 
 proc messageUpdate(s: Shard, msg: Message, oldMessage: Option[Message], exists: bool) {.event(client).} =
     if exists:
-        await filterMessage(msg)
+        await filterMessage(s, msg)
 
 
 waitFor client.startSession()
