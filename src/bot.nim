@@ -21,7 +21,8 @@ proc filterMessage(msg: Message) {.async.} =
         if inviteUrlPre in contentLower:
             if not msg.member.get().permissions.contains(PermissionFlags.permAdministrator):
                 await client.api.deleteMessage(msg.channel_id, msg.id, "Contained invite link.")
-                discard await client.api.sendMessage(msg.channel_id, &"{@(msg.author)} invite links aren't allowed here.")
+                discard await client.api.sendMessage(msg.channel_id,
+                        &"{@(msg.author)} invite links aren't allowed here.")
 
 proc onReady(s: Shard, r: Ready) {.event(client).} =
     await s.updateStatus(@[ActivityStatus(name: STATUS_NAME, kind: ActivityType.atPlaying)])
