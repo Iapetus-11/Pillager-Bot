@@ -1,0 +1,8 @@
+{
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.tabSize": 2,
+    "[nim]": {
+      "editor.tabSize": 4
+    }
+  }
