@@ -54,12 +54,18 @@ class Events(commands.Cog):
         if m.author.bot:
             return
 
-        for iurl in ("discord.gg/", "invite.gg/", "dsc.gg/", "dsc.lol/", "discord.com/invite/"):
-            if iurl in m.content.lower():
-                if not m.author.permissions_in(m.channel).administrator:
-                    await m.delete()
-                    await m.channel.send(embed=discord.Embed(description="Invite links aren't allowed here."))
-                    return
+        if not m.author.permissions_in(m.channel).administrator:
+            if "@everyone" in m.content and ("gift" in m.content or "nitro" in m.content or "free" in m.content):
+                await m.delete()
+                await m.author.ban(reason="Advertising a scam")
+                return
+
+            for iurl in ("discord.gg/", "invite.gg/", "dsc.gg/", "dsc.lol/", "discord.com/invite/"):
+                if iurl in m.content.lower():
+                    if not m.author.permissions_in(m.channel).administrator:
+                        await m.delete()
+                        await m.channel.send(embed=discord.Embed(description="Invite links aren't allowed here."))
+                        return
 
     @commands.Cog.listener()
     async def on_message_edit(self, m_b, m):
