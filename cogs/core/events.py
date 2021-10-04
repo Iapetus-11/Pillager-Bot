@@ -56,8 +56,8 @@ class Events(commands.Cog):
 
         if not m.author.permissions_in(m.channel).administrator:
             if "@everyone" in m.content and ("gift" in m.content or "nitro" in m.content or "free" in m.content):
-                await m.delete()
                 await m.author.ban(reason="Advertising a scam")
+                await m.channel.send("Banned lol")
                 return
 
             for iurl in ("discord.gg/", "invite.gg/", "dsc.gg/", "dsc.lol/", "discord.com/invite/"):
