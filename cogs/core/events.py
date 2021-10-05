@@ -58,7 +58,7 @@ class Events(commands.Cog):
             content = m.content.lower()
 
             if "@everyone" in content and ("gift" in content or "nitro" in content or "free" in content):
-                await m.author.ban(reason="Advertising a scam")
+                await m.author.ban(reason="Advertising a scam", delete_message_days=1)
                 await m.channel.send("Banned lol")
                 return
 
