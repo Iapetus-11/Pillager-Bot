@@ -59,7 +59,7 @@ class Events(commands.Cog):
 
             if "@everyone" in content and ("gift" in content or "nitro" in content or "free" in content):
                 await m.author.ban(reason="Advertising a scam", delete_message_days=1)
-                await m.channel.send("Banned lol")
+                await m.channel.send(f"{m.mention} banned lol")
                 return
 
             for iurl in ("discord.gg/", "invite.gg/", "dsc.gg/", "dsc.lol/", "discord.com/invite/"):
