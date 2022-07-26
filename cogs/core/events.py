@@ -91,7 +91,11 @@ class Events(commands.Cog):
             embed.add_field(name="Channel", value=m_b.channel.mention)
 
             if m_b.content:
-                embed.add_field(name="Original Content", value=m_b.content, inline=False)
+                embed.add_field(name="Original Content", value=m_b.content[:1024], inline=False)
+                if len(m_b.content) > 1024:
+                    content = m_b.content[1024:]
+                    for chunk in [content[i:i + 1024] for i in range(0, len(content), 1024)]:
+                        embed.add_field(name="Original Content (Continued)", value=chunk, inline=False)
 
             if m_b.attachments:
                 embed.add_field(name="Attachments", value="\n".join([a.url for a in m_b.attachments]), inline=False)
@@ -111,11 +115,15 @@ class Events(commands.Cog):
             embed.add_field(name="Channel", value=m.channel.mention)
 
             if m.content:
-                embed.add_field(name="Content", value=m.content, inline=False)
+                embed.add_field(name="Content", value=m.content[:1024], inline=False)
+                if len(m.content) > 1024:
+                    content = m.content[1024:]
+                    for chunk in [content[i:i + 1024] for i in range(0, len(content), 1024)]:
+                        embed.add_field(name="Original Content (Continued)", value=chunk, inline=False)
 
             if m.attachments:
-                embed.add_field(name="Attachments", value="\n".join([a.url for a in m_b.attachments]), inline=False)
-                
+                embed.add_field(name="Attachments", value="\n".join([a.url for a in m.attachments]), inline=False)
+
             await log_channel.send(embed=embed)
 
     @commands.Cog.listener()
@@ -146,17 +154,17 @@ class Events(commands.Cog):
                 time += f"{minutes} minutes, "
             time += f"{round(seconds, 2)} seconds"
 
-            await ctx.send(f"Be patient and wait {time} stupidhead")
+            await ctx.send(f"Be patient and wait {time}")
         elif isinstance(e, commands.NoPrivateMessage):
-            await ctx.send("Can't use that command here fuckwad")
+            await ctx.send("Can't use that command here idiot")
         elif isinstance(e, commands.MissingPermissions):
             await ctx.send("I dare you to again motherfucker *stares motherfuckerly*")
         elif isinstance(e, commands.BotMissingPermissions):
-            await ctx.send("Imagine not giving me admin perms degenerate poopy head")
+            await ctx.send("Imagine not giving me admin perms??")
         elif isinstance(e, commands.MaxConcurrencyReached):
-            await ctx.send("Try again in a bit retard")
+            await ctx.send("Try again in a bit ding dong")
         elif isinstance(e, commands.MissingRequiredArgument):
-            await ctx.send("FUCKING USE THE COMMAND RIGHT DEGENERATE SCUM")
+            await ctx.send("learn how to use the command right, idiot")
         elif (
             isinstance(e, commands.BadArgument)
             or isinstance(e, commands.errors.ExpectedClosingQuoteError)
