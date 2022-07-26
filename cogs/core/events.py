@@ -123,7 +123,7 @@ class Events(commands.Cog):
                 if len(m.content) > 1024:
                     content = m.content[1024:]
                     for chunk in [content[i : i + 1024] for i in range(0, len(content), 1024)]:
-                        embed.add_field(name="Original Content (Continued)", value=chunk, inline=False)
+                        embed.add_field(name="Content (Continued)", value=chunk, inline=False)
 
             if m.attachments:
                 embed.add_field(name="Attachments", value="\n".join([a.url for a in m.attachments]), inline=False)
