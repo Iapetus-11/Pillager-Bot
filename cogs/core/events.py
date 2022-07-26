@@ -98,7 +98,7 @@ class Events(commands.Cog):
                 embed.add_field(name="Original Content", value=m_b.content[:1024], inline=False)
                 if len(m_b.content) > 1024:
                     content = m_b.content[1024:]
-                    for chunk in [content[i:i + 1024] for i in range(0, len(content), 1024)]:
+                    for chunk in [content[i : i + 1024] for i in range(0, len(content), 1024)]:
                         embed.add_field(name="Original Content (Continued)", value=chunk, inline=False)
 
             if m_b.attachments:
@@ -122,7 +122,7 @@ class Events(commands.Cog):
                 embed.add_field(name="Content", value=m.content[:1024], inline=False)
                 if len(m.content) > 1024:
                     content = m.content[1024:]
-                    for chunk in [content[i:i + 1024] for i in range(0, len(content), 1024)]:
+                    for chunk in [content[i : i + 1024] for i in range(0, len(content), 1024)]:
                         embed.add_field(name="Original Content (Continued)", value=chunk, inline=False)
 
             if m.attachments:
