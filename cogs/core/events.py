@@ -57,15 +57,15 @@ class Events(commands.Cog):
         if not m.author.permissions_in(m.channel).administrator:
             content = m.content.lower()
 
-            if "@everyone" in content and ("gift" in content or "nitro" in content or "free" in content):
+            if "@everyone" in content and ("gift" in content or "nitro" in content or "free" in content or "steam" in content):
                 await m.author.ban(reason="Advertising a scam", delete_message_days=1)
                 await m.channel.send(f"{m.mention} banned lol")
                 return
 
-            for iurl in ("discord.gg/", "invite.gg/", "dsc.gg/", "dsc.lol/", "discord.com/invite/"):
+            for iurl in ["discord.gg/", "invite.gg/", "dsc.gg/", "dsc.lol/", "discord.com/invite/"]:
                 if iurl in content:
                     await m.delete()
-                    await m.channel.send(embed=discord.Embed(description="Invite links aren't allowed here."))
+                    await m.channel.send(embed=discord.Embed(description=f"{m.author.mention} invite links aren't allowed here."))
                     return
 
     @commands.Cog.listener()
@@ -77,18 +77,26 @@ class Events(commands.Cog):
             if iurl in m.content.lower():
                 if not m.author.permissions_in(m.channel).administrator:
                     await m.delete()
-                    await m.channel.send(embed=discord.Embed(description="Invite links aren't allowed here."))
+                    await m.channel.send(embed=discord.Embed(description=f"{m.author.mention} invite links aren't allowed here."))
                     return
 
         g_conf = self.conf.welcoming.guilds.get(str(m.guild.id))
 
         if g_conf.log_channel:
             log_channel = self.bot.get_channel(g_conf.log_channel)
-            await log_channel.send(
-                embed=discord.Embed(
-                    description=m_b.content, title=f"Message in {m.channel} edited by {m.author} from", url=m.jump_url
-                )
-            )
+
+            embed = discord.Embed(title=f"Message Edited", url=m.jump_url)
+            embed.add_field(name="Author", value=m_b.author.mention)
+            embed.add_field(name="\uFEFF", value="\uFEFF")
+            embed.add_field(name="Channel", value=m_b.channel.mention)
+
+            if m_b.content:
+                embed.add_field(name="Original Content", value=m_b.content, inline=False)
+
+            if m_b.attachments:
+                embed.add_field(name="Attachments", value="\n".join([a.url for a in m_b.attachments]), inline=False)
+
+            await log_channel.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_message_delete(self, m):
@@ -96,11 +104,19 @@ class Events(commands.Cog):
 
         if g_conf.log_channel:
             log_channel = self.bot.get_channel(g_conf.log_channel)
-            await log_channel.send(
-                embed=discord.Embed(
-                    description=m.content, title=f"Message in {m.channel} deleted by {m.author}", url=m.jump_url
-                )
-            )
+            
+            embed = discord.Embed(title=f"Message Deleted", url=m.jump_url)
+            embed.add_field(name="Author", value=m.author.mention)
+            embed.add_field(name="\uFEFF", value="\uFEFF")
+            embed.add_field(name="Channel", value=m.channel.mention)
+
+            if m.content:
+                embed.add_field(name="Content", value=m.content, inline=False)
+
+            if m.attachments:
+                embed.add_field(name="Attachments", value="\n".join([a.url for a in m_b.attachments]), inline=False)
+                
+            await log_channel.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, e):
