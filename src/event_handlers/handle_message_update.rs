@@ -5,7 +5,7 @@ use crate::{database::models::{self, Message}, services::message_service::{fetch
 pub async fn handle_message_update(
     _: &serenity::Context,
     data: &Data,
-    old_if_available: &Option<serenity::Message>,
+    _: &Option<serenity::Message>,
     new: &Option<serenity::Message>,
     event: &serenity::MessageUpdateEvent,
 ) -> Result<(), Error> {
@@ -29,7 +29,9 @@ pub async fn handle_message_update(
         };
     }
     
-    upsert_message(&mut db_conn, &message);
+    if message.is_some() {
+        upsert_message(&mut db_conn, &message.unwrap());
+    }
 
     Ok(())
 }
