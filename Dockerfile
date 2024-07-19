@@ -1,23 +1,3 @@
-# FROM rust:alpine3.18 AS build
-
-# WORKDIR /pillager-bot
-
-# COPY Cargo.lock Cargo.toml diesel.toml ./
-# COPY src/ ./src/
-
-# RUN apk add musl musl-dev libpq-dev postgresql-dev openssl
-# # 
-
-# RUN cargo install --path .
-
-# FROM alpine:3.18 AS runner
-
-# WORKDIR /pillager-bot
-
-# COPY --from=build ~/.cargo/bin/Pillager-Bot .
-
-# CMD ["Pillager-Bot"]
-
 FROM rust:slim-bullseye AS build
 
 WORKDIR /pillager-bot
