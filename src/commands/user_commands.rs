@@ -34,9 +34,7 @@ pub async fn user(
         .field(
             format!("Joined {0}", guild.name),
             serenity::FormattedTimestamp::new(
-                user_member
-                    .joined_at
-                    .unwrap_or_else(|| Timestamp::default()),
+                user_member.joined_at.unwrap_or_else(Timestamp::default),
                 Some(serenity::FormattedTimestampStyle::RelativeTime),
             )
             .to_string(),
@@ -46,7 +44,7 @@ pub async fn user(
 
     let response = CreateReply::default().embed(embed);
 
-    ctx.send(response).await?;
+    ctx.send(response).await.unwrap();
 
     Ok(())
 }

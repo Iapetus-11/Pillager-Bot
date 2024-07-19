@@ -9,6 +9,7 @@ dependencies = [
  "chrono",
  "diesel",
  "poise",
+ "regex",
  "tokio",
 ]
 

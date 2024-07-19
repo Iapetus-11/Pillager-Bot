@@ -1,3 +1,5 @@
+use chrono::TimeDelta;
+use chrono::Utc;
 use diesel::prelude::*;
 use diesel::PgConnection;
 
@@ -24,7 +26,7 @@ pub fn upsert_message(db_conn: &mut PgConnection, message: &Message) {
         .expect("Message upsertion to be successful");
 }
 
-pub fn fetch_message(db_conn: &mut PgConnection, message_id: i64) -> Option<Message> {
+pub fn get_message(db_conn: &mut PgConnection, message_id: i64) -> Option<Message> {
     use crate::database::schema::messages::dsl::*;
 
     QueryDsl::filter(messages, id.eq(message_id))
@@ -32,4 +34,26 @@ pub fn fetch_message(db_conn: &mut PgConnection, message_id: i64) -> Option<Mess
         .first(db_conn)
         .optional()
         .expect("Message to be fetched successfully")
+}
+
+pub fn get_recent_user_messages(
+    db_conn: &mut PgConnection,
+    author_id_: i64,
+    guild_id_: i64,
+    since: TimeDelta,
+    limit: i64,
+) -> Vec<Message> {
+    use crate::database::schema::messages::dsl::*;
+
+    QueryDsl::filter(
+        messages,
+        author_id
+            .eq(author_id_)
+            .and(guild_id.eq(guild_id_))
+            .and(created_at.ge(Utc::now() - since)),
+    )
+    .limit(limit)
+    .select(Message::as_select())
+    .load(db_conn)
+    .expect("Message fetching to be successful")
 }

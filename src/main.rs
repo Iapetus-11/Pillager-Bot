@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate diesel;
-
 use poise::serenity_prelude::{self as serenity};
 use std::env;
 
@@ -8,10 +5,10 @@ mod commands;
 mod database;
 mod event_handlers;
 mod services;
+mod utils;
 
 struct Data {
     db_pool: diesel::r2d2::Pool<diesel::r2d2::ConnectionManager<diesel::PgConnection>>,
-    message_logging_channel_id: u64,
 }
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -24,10 +21,6 @@ async fn main() {
         .parse::<u64>()
         .expect("HOME_GUILD_ID to be a valid i64");
     let database_url = env::var("DATABASE_URL").expect("Please set DATABASE_URL in your .env");
-    let message_logging_channel_id = env::var("MESSAGE_LOGGING_CHANNEL_ID")
-        .expect("Please set MESSAGE_LOGGING_CHANNEL_ID in your .env")
-        .parse::<u64>()
-        .expect("MESSAGE_LOGGING_CHANNEL_ID to be a valid i64");
 
     let intents = serenity::GatewayIntents::all();
 
@@ -43,16 +36,16 @@ async fn main() {
                     &framework.options().commands,
                     serenity::GuildId::from(home_guild_id),
                 )
-                .await?;
+                .await
+                .unwrap();
 
-                poise::builtins::register_globally(ctx, &framework.options().commands).await?;
+                poise::builtins::register_globally(ctx, &framework.options().commands)
+                    .await
+                    .unwrap();
 
                 let db_pool = database::utils::setup_database_pool(&database_url);
 
-                Ok(Data {
-                    db_pool,
-                    message_logging_channel_id,
-                })
+                Ok(Data { db_pool })
             })
         })
         .options(poise::FrameworkOptions {
@@ -80,13 +73,30 @@ async fn on_event(
     match event {
         serenity::FullEvent::Ready { data_about_bot: _ } => println!("Bot is ready!"),
         serenity::FullEvent::Message { new_message } => {
-            event_handlers::handle_message(ctx, data, new_message).await?
+            event_handlers::handle_message(ctx, data, new_message)
+                .await
+                .unwrap()
         }
         serenity::FullEvent::MessageUpdate {
             old_if_available,
             new,
             event,
-        } => event_handlers::handle_message_update(ctx, data, old_if_available, new, event).await?,
+        } => event_handlers::handle_message_update(ctx, data, old_if_available, new, event)
+            .await
+            .unwrap(),
+        serenity::FullEvent::MessageDelete {
+            channel_id,
+            deleted_message_id,
+            guild_id,
+        } => event_handlers::handle_message_delete(
+            ctx,
+            data,
+            channel_id,
+            deleted_message_id,
+            guild_id,
+        )
+        .await
+        .unwrap(),
         _ => {}
     }
 

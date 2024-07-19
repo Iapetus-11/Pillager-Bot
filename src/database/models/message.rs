@@ -4,7 +4,7 @@ use poise::serenity_prelude;
 
 use crate::database::schema::messages;
 
-#[derive(Debug, Selectable, Queryable, Insertable, AsChangeset)]
+#[derive(Debug, Clone, Selectable, Queryable, Insertable, AsChangeset)]
 #[diesel(table_name = messages)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 pub struct Message {
@@ -18,15 +18,12 @@ pub struct Message {
 
 impl From<&serenity_prelude::Message> for Message {
     fn from(value: &serenity_prelude::Message) -> Message {
-        let guild_id: Option<i64> = match value.guild_id {
-            None => None,
-            Some(guild_id) => Some(guild_id.into()),
-        };
+        let guild_id: Option<i64> = value.guild_id.map(|guild_id| guild_id.into());
 
         Message {
             id: value.id.into(),
             author_id: value.author.id.into(),
-            guild_id: guild_id,
+            guild_id,
             channel_id: value.channel_id.into(),
             content: value.content.clone(),
             created_at: *value.timestamp,

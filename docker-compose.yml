@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+  bot:
+    container_name: 'pillager-bot'
+    build:
+      context: '.'
+    env_file:
+      - .env
+    init: true
