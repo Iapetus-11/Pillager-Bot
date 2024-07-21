@@ -1,3 +1,4 @@
+use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use poise::serenity_prelude::{self as serenity};
 use std::env;
 
@@ -6,6 +7,8 @@ mod database;
 mod event_handlers;
 mod services;
 mod utils;
+
+pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./src/database/migrations");
 
 struct Data {
     db_pool: diesel::r2d2::Pool<diesel::r2d2::ConnectionManager<diesel::PgConnection>>,
@@ -27,32 +30,31 @@ async fn main() {
     let framework = poise::Framework::<Data, Error>::builder()
         .options(poise::FrameworkOptions {
             commands: vec![commands::user_commands::user()],
-            ..Default::default()
-        })
-        .setup(move |ctx, _ready, framework| {
-            Box::pin(async move {
-                poise::builtins::register_in_guild(
-                    ctx,
-                    &framework.options().commands,
-                    serenity::GuildId::from(home_guild_id),
-                )
-                .await
-                .unwrap();
-
-                poise::builtins::register_globally(ctx, &framework.options().commands)
-                    .await
-                    .unwrap();
-
-                let db_pool = database::utils::setup_database_pool(&database_url);
-
-                Ok(Data { db_pool })
-            })
-        })
-        .options(poise::FrameworkOptions {
             event_handler: |_ctx, event, _framework, _data| {
                 Box::pin(on_event(_ctx, event, _framework, _data))
             },
             ..Default::default()
+        })
+        .setup(move |ctx, _ready, framework| {
+            Box::pin(async move {
+                let options = framework.options();
+
+                poise::builtins::register_in_guild(
+                    ctx,
+                    &options.commands,
+                    home_guild_id.into(),
+                )
+                .await?;
+
+                poise::builtins::register_globally(ctx, &options.commands)
+                    .await?;
+
+                let db_pool = database::utils::setup_database_pool(&database_url);
+
+                db_pool.get().unwrap().run_pending_migrations(MIGRATIONS).unwrap();
+
+                Ok(Data { db_pool })
+            })
         })
         .build();
 
