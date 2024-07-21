@@ -9,7 +9,7 @@ COPY Cargo.lock Cargo.toml diesel.toml ./
 COPY src/ ./src/
 
 # Install dependencies, but build a dummy project to cache deps separately from project files to avoid
-# unnecessarily download+building dependencies unnecessarily
+# unnecessarily download+building dependencies
 RUN echo '// dummy file\nfn main() {}' > ./src/main.rs
 RUN cargo build
 
