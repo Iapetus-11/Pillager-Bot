@@ -6,12 +6,13 @@ RUN apt-get update
 RUN apt-get install libpq-dev -y
 
 COPY Cargo.lock Cargo.toml diesel.toml ./
-COPY src/ ./src/
 
 # Install dependencies, but build a dummy project to cache deps separately from project files to avoid
 # unnecessarily download+building dependencies
-RUN echo '// dummy file\nfn main() {}' > ./src/main.rs
+RUN mkdir src && echo '// dummy file\nfn main() {}' > ./src/main.rs
 RUN cargo build
+
+COPY src/ ./src/
 
 RUN cargo install --path . --root ./build/
 
