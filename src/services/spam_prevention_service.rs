@@ -93,7 +93,7 @@ pub async fn spam_detection_and_handling(
                             "name": "Sample",
                             "value": truncate(&message.content, 1024),
                             "inline": false,
-                        }
+                        },
                     ],
                 }]
             })).await.unwrap();

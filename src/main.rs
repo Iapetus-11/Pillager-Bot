@@ -22,14 +22,27 @@ async fn main() {
     let home_guild_id = env::var("HOME_GUILD_ID")
         .expect("Please set HOME_GUILD_ID in your .env")
         .parse::<u64>()
-        .expect("HOME_GUILD_ID to be a valid i64");
+        .expect("HOME_GUILD_ID must be a valid i64");
     let database_url = env::var("DATABASE_URL").expect("Please set DATABASE_URL in your .env");
+    let development_mode = env::var("DEVELOPMENT_MODE")
+        .unwrap_or("false".into())
+        .parse::<bool>()
+        .expect("DEVELOPMENT_MODE must be a valid bool");
+
+    println!("Running Pillager Bot...");
+
+    if development_mode {
+        println!("Development mode activated!");
+    }
 
     let intents = serenity::GatewayIntents::all();
 
     let framework = poise::Framework::<Data, Error>::builder()
         .options(poise::FrameworkOptions {
-            commands: vec![commands::user_commands::user()],
+            commands: vec![
+                commands::user_commands::user(),
+                commands::config_commands::config(),
+            ],
             event_handler: |_ctx, event, _framework, _data| {
                 Box::pin(on_event(_ctx, event, _framework, _data))
             },
@@ -39,19 +52,29 @@ async fn main() {
             Box::pin(async move {
                 let options = framework.options();
 
-                poise::builtins::register_in_guild(
-                    ctx,
-                    &options.commands,
-                    home_guild_id.into(),
-                )
-                .await?;
-
-                poise::builtins::register_globally(ctx, &options.commands)
-                    .await?;
+                if development_mode {
+                    poise::builtins::register_in_guild(
+                        ctx,
+                        &options.commands,
+                        home_guild_id.into(),
+                    )
+                    .await
+                    .unwrap();
+                    println!("Registered slash commands in home guild: {}", home_guild_id);
+                } else {
+                    poise::builtins::register_globally(ctx, &options.commands)
+                        .await
+                        .unwrap();
+                    println!("Registered slash commands globally");
+                }
 
                 let db_pool = database::utils::setup_database_pool(&database_url);
 
-                db_pool.get().unwrap().run_pending_migrations(MIGRATIONS).unwrap();
+                db_pool
+                    .get()
+                    .unwrap()
+                    .run_pending_migrations(MIGRATIONS)
+                    .unwrap();
 
                 Ok(Data { db_pool })
             })
@@ -73,7 +96,7 @@ async fn on_event(
     data: &Data,
 ) -> Result<(), Error> {
     match event {
-        serenity::FullEvent::Ready { data_about_bot: _ } => println!("Bot is ready!"),
+        serenity::FullEvent::Ready { data_about_bot: _ } => println!("Bot is connected and ready!"),
         serenity::FullEvent::Message { new_message } => {
             event_handlers::handle_message(ctx, data, new_message)
                 .await

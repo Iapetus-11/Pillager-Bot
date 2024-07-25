@@ -16,7 +16,7 @@ COPY src/ ./src/
 
 RUN cargo install --path . --root ./build/
 
-FROM rust:slim-bullseye AS runner
+FROM debian:bullseye-slim AS runner
 
 RUN apt-get update
 RUN apt-get install libpq5 -y

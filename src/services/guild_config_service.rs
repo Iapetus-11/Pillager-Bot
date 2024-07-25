@@ -30,3 +30,15 @@ pub fn get_or_create_guild_config(db_conn: &mut PgConnection, guild_id: i64) -> 
 
     return get_or_create_guild_config(db_conn, guild_id);
 }
+
+pub fn update_or_create_guild_config(db_conn: &mut PgConnection, config: &GuildConfig) {
+    use crate::database::schema::guild_configs::dsl::*;
+
+    config
+        .insert_into(guild_configs)
+        .on_conflict(id)
+        .do_update()
+        .set(config)
+        .execute(db_conn)
+        .expect("Insert or update of GuildConfig to not fail");
+}
