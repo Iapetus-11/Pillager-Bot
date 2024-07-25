@@ -103,7 +103,7 @@ pub async fn config_spam_autoban(
         ));
 
         if let Some(log_channel) = &log_channel {
-            message_parts.push(format!("and those bans in {}", log_channel.mention()))
+            message_parts.push(format!("and log those bans in {}", log_channel.mention()))
         }
 
         ctx.say(message_parts.join(" ")).await.unwrap();
