@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  postgres:
+    container_name: 'pillager-bot-postgres'
+    image: 'postgres:16-alpine'
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: 'pillager_bot'
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 1s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - ./.run_volume/db:/var/lib/postgresql/data
+  bot:
+    container_name: 'pillager-bot'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    build:
+      context: '.'
+    env_file:
+      - .env
+    init: true

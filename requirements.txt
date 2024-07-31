@@ -1,2 +1,0 @@
-classy-json
-discord.py

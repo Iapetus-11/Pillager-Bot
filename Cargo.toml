@@ -1,0 +1,12 @@
+[package]
+name = "Pillager-Bot"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+chrono = "0.4.38"
+diesel = { version = "2.2.1", features = ["r2d2", "chrono", "postgres"] }
+diesel_migrations = "2.2.0"
+poise = "0.6.1"
+regex = "1.10.5"
+tokio = { version = "1.38.0", features = ["full"] }
