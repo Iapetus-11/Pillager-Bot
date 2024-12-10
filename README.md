@@ -5,6 +5,15 @@
 - [Serenity](https://github.com/serenity-rs/serenity) with [Poise](https://github.com/serenity-rs/poise)
 - [Diesel ORM](https://diesel.rs/)
 
+## Features
+- Automated spam prevention
+- User details lookup
+
+### Commands
+- `/config message_logging <log channel>` - *sets up deleted or edited message logging to the specified channel*
+- `/config spam_autoban <threshold> <log channel>` - *sets up automated spam prevention, by banning users after a threshold is reached*
+- `/user <user>` - *shows information on the specified user*
+
 ## Development
 
 ### Run Locally
