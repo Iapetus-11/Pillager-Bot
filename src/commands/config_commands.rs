@@ -77,7 +77,9 @@ pub async fn config_spam_autoban(
     #[description = "The channel to log automated bans to"] log_channel: Option<serenity::Channel>,
 ) -> Result<(), Error> {
     let guild_id: i64 = ctx.guild_id().unwrap().into();
-    let channel_id: Option<i64> = log_channel.as_ref().map(|log_channel| log_channel.id().into());
+    let channel_id: Option<i64> = log_channel
+        .as_ref()
+        .map(|log_channel| log_channel.id().into());
 
     let mut db_conn = get_db_conn_from_ctx(&ctx);
 
