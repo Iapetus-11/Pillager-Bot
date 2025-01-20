@@ -28,7 +28,7 @@ pub fn get_or_create_guild_config(db_conn: &mut PgConnection, guild_id: i64) -> 
         .execute(db_conn)
         .expect("Successful creation of GuildConfig");
 
-    return get_or_create_guild_config(db_conn, guild_id);
+    get_or_create_guild_config(db_conn, guild_id)
 }
 
 pub fn update_or_create_guild_config(db_conn: &mut PgConnection, config: &GuildConfig) {

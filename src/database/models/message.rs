@@ -6,7 +6,7 @@ use crate::database::schema::messages;
 
 #[derive(Debug, Clone, Selectable, Queryable, Insertable, AsChangeset)]
 #[diesel(table_name = messages, check_for_backend(diesel::pg::Pg))]
-#[changeset_options(treat_none_as_null = "true")]
+#[diesel(treat_none_as_null = true)]
 pub struct Message {
     pub id: i64,
     pub author_id: i64,
