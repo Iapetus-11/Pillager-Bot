@@ -14,10 +14,10 @@ pub async fn user(
 
     let guild = ctx.partial_guild().await.unwrap();
 
-    let user_member = match ctx.author_member().await {
-        Some(m) => Ok(m),
-        None => Err("Failed to fetch author as a member"),
-    }?;
+    let user_member = match guild.member(ctx, user.id).await {
+        Ok(member) => member,
+        Err(_) => Err("Failed to fetch the selected user as a member")?,
+    };
 
     let embed = serenity::CreateEmbed::new()
         .title(format!("{0} (`{1}`)", user.name, user.id))
