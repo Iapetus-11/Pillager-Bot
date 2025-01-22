@@ -1,4 +1,4 @@
-name: Run checks
+name: Checks
 
 on: [ push, pull_request, workflow_dispatch ]
 
@@ -13,11 +13,11 @@ jobs:
         with:
           components: rustfmt,clippy
 
-      - name: Check Formatting
+      - name: Check formatting
         uses: actions-rust-lang/rustfmt@v1
 
       - name: Run Clippy
         run: cargo clippy
 
-      - name: Run Tests
+      - name: Run tests
         run: cargo test
