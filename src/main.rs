@@ -1,8 +1,9 @@
+use config::load_config;
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use poise::serenity_prelude::{self as serenity};
-use std::env;
 
 mod commands;
+mod config;
 mod database;
 mod event_handlers;
 mod services;
@@ -18,20 +19,11 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 
 #[tokio::main]
 async fn main() {
-    let token = env::var("DISCORD_TOKEN").expect("Please set DISCORD_TOKEN in your .env");
-    let home_guild_id = env::var("HOME_GUILD_ID")
-        .expect("Please set HOME_GUILD_ID in your .env")
-        .parse::<u64>()
-        .expect("HOME_GUILD_ID must be a valid i64");
-    let database_url = env::var("DATABASE_URL").expect("Please set DATABASE_URL in your .env");
-    let development_mode = env::var("DEVELOPMENT_MODE")
-        .unwrap_or("false".into())
-        .parse::<bool>()
-        .expect("DEVELOPMENT_MODE must be a valid bool");
+    let config = load_config();
 
     println!("Running Pillager Bot...");
 
-    if development_mode {
+    if config.development_mode {
         println!("Development mode activated!");
     }
 
@@ -52,15 +44,18 @@ async fn main() {
             Box::pin(async move {
                 let options = framework.options();
 
-                if development_mode {
+                if config.development_mode {
                     poise::builtins::register_in_guild(
                         ctx,
                         &options.commands,
-                        home_guild_id.into(),
+                        config.home_guild_id.into(),
                     )
                     .await
                     .unwrap();
-                    println!("Registered slash commands in home guild: {}", home_guild_id);
+                    println!(
+                        "Registered slash commands in home guild: {}",
+                        config.home_guild_id
+                    );
                 } else {
                     poise::builtins::register_globally(ctx, &options.commands)
                         .await
@@ -68,7 +63,7 @@ async fn main() {
                     println!("Registered slash commands globally");
                 }
 
-                let db_pool = database::utils::setup_database_pool(&database_url);
+                let db_pool = database::utils::setup_database_pool(&config.database_url);
 
                 db_pool
                     .get()
@@ -81,7 +76,7 @@ async fn main() {
         })
         .build();
 
-    let mut client = serenity::ClientBuilder::new(token, intents)
+    let mut client = serenity::ClientBuilder::new(config.discord_token, intents)
         .framework(framework)
         .await
         .unwrap();
