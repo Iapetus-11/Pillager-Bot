@@ -1,3 +1,3 @@
 pub mod models;
-pub mod schema;
-pub mod utils;
+
+pub type Db = sqlx::Pool<sqlx::Postgres>;

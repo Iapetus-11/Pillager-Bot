@@ -3,7 +3,7 @@
 
 ## Technologies
 - [Serenity](https://github.com/serenity-rs/serenity) with [Poise](https://github.com/serenity-rs/poise)
-- [Diesel ORM](https://diesel.rs/)
+- [SQLX](https://github.com/launchbadge/sqlx)
 
 ## Features
 - Automated spam prevention

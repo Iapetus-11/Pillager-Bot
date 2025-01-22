@@ -1,6 +1,6 @@
 use config::load_config;
-use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use poise::serenity_prelude::{self as serenity};
+use sqlx::migrate::Migrator;
 
 mod commands;
 mod config;
@@ -9,10 +9,10 @@ mod event_handlers;
 mod services;
 mod utils;
 
-pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./src/database/migrations");
+static MIGRATOR: Migrator = sqlx::migrate!("./src/database/migrations");
 
 struct Data {
-    db_pool: diesel::r2d2::Pool<diesel::r2d2::ConnectionManager<diesel::PgConnection>>,
+    db: sqlx::Pool<sqlx::Postgres>,
 }
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
@@ -63,15 +63,12 @@ async fn main() {
                     println!("Registered slash commands globally");
                 }
 
-                let db_pool = database::utils::setup_database_pool(&config.database_url);
+                let db = sqlx::postgres::PgPoolOptions::new()
+                    .max_connections(config.database_pool_size)
+                    .connect(&config.database_url)
+                    .await?;
 
-                db_pool
-                    .get()
-                    .unwrap()
-                    .run_pending_migrations(MIGRATIONS)
-                    .unwrap();
-
-                Ok(Data { db_pool })
+                Ok(Data { db })
             })
         })
         .build();

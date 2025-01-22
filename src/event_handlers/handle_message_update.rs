@@ -21,7 +21,11 @@ pub async fn handle_message_update(
         return Ok(());
     }
 
-    let mut db_conn = data.db_pool.get().expect("A valid database connection");
+    let mut db_conn = data
+        .db_pool
+        .acquire()
+        .await
+        .expect("DB connection was not successful");
 
     let existing_message = get_message(&mut db_conn, event.id.into());
 

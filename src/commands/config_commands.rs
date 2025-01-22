@@ -1,7 +1,6 @@
 use poise::serenity_prelude::{self as serenity, Mentionable};
 
 use crate::{
-    database::utils::get_db_conn_from_ctx,
     services::guild_config_service::{get_or_create_guild_config, update_or_create_guild_config},
     utils::emojis::YES_EMOJI,
     Context, Error,
@@ -33,13 +32,13 @@ pub async fn config_message_logging_channel(
     let guild_id: i64 = ctx.guild_id().unwrap().into();
     let channel_id: Option<i64> = channel.as_ref().map(|channel| channel.id().into());
 
-    let mut db_conn = get_db_conn_from_ctx(&ctx);
+    let mut db = ctx.data().db.clone();
 
-    let mut guild_config = get_or_create_guild_config(&mut db_conn, guild_id);
+    let mut guild_config = get_or_create_guild_config(&mut db, guild_id).await.unwrap();
 
     guild_config.message_logging_channel_id = channel_id;
 
-    update_or_create_guild_config(&mut db_conn, &guild_config);
+    update_or_create_guild_config(&mut db, &guild_config).await.unwrap();
 
     if let Some(channel) = channel {
         ctx.say(format!(
@@ -81,9 +80,9 @@ pub async fn config_spam_autoban(
         .as_ref()
         .map(|log_channel| log_channel.id().into());
 
-    let mut db_conn = get_db_conn_from_ctx(&ctx);
+    let mut db = ctx.data().db.clone();
 
-    let mut guild_config = get_or_create_guild_config(&mut db_conn, guild_id);
+    let mut guild_config = get_or_create_guild_config(&mut db, guild_id).await.unwrap();
 
     guild_config.autoban_spam_message_threshold = threshold;
     guild_config.automated_ban_logging_channel_id = channel_id;
@@ -113,7 +112,7 @@ pub async fn config_spam_autoban(
         .unwrap();
     }
 
-    update_or_create_guild_config(&mut db_conn, &guild_config);
+    update_or_create_guild_config(&mut db, &guild_config).await.unwrap();
 
     Ok(())
 }

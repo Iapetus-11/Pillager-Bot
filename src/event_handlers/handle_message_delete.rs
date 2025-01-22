@@ -13,7 +13,11 @@ pub async fn handle_message_delete(
     deleted_message_id: &serenity::MessageId,
     guild_id: &Option<serenity::GuildId>,
 ) -> Result<(), Error> {
-    let mut db_conn = data.db_pool.get().expect("A valid database connection");
+    let mut db_conn = data
+        .db_pool
+        .acquire()
+        .await
+        .expect("DB connection was not successful");
 
     let message = get_message(&mut db_conn, (*deleted_message_id).into());
 

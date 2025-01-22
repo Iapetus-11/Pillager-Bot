@@ -1,20 +1,16 @@
 use chrono::TimeDelta;
 use chrono::Utc;
-use diesel::prelude::*;
-use diesel::PgConnection;
 
 use crate::database::models::Message;
 
-pub fn insert_message(db_conn: &mut PgConnection, message: &Message) {
-    use crate::database::schema::messages::dsl::*;
-
+pub fn insert_message(db: &mut Db, message: &Message) {
     message
         .insert_into(messages)
         .execute(db_conn)
         .expect("Message to be inserted successfully");
 }
 
-pub fn upsert_message(db_conn: &mut PgConnection, message: &Message) {
+pub fn upsert_message(db: &mut Db, message: &Message) {
     use crate::database::schema::messages::dsl::*;
 
     message

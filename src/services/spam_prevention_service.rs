@@ -1,5 +1,4 @@
 use chrono::TimeDelta;
-use diesel::PgConnection;
 use poise::serenity_prelude::{self as serenity, json::json};
 use regex::Regex;
 
