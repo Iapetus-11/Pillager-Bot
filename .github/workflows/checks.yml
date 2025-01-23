@@ -29,7 +29,7 @@ jobs:
       - name: Install SQLX CLI
         run: cargo install sqlx-cli
 
-      - name: Run migrations
+      - name: Run migrations & prepare SQLX
         env:
           DATABASE_URL: postgresql://postgres:password@localhost:5432/pillager-bot
         run: |
