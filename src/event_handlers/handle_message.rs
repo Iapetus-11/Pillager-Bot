@@ -3,7 +3,7 @@ use poise::serenity_prelude::{self as serenity};
 use crate::{
     database::models,
     services::{
-        message_service::insert_message, spam_prevention_service::spam_detection_and_handling,
+        message_service::upsert_message, spam_prevention_service::spam_detection_and_handling,
     },
     Data, Error,
 };
@@ -17,13 +17,13 @@ pub async fn handle_message(
         return Ok(());
     }
 
-    let mut db_conn = data.db_pool.get().expect("A valid database connection");
+    let mut db = data.db.clone();
 
     let message: models::Message = message.into();
 
-    insert_message(&mut db_conn, &message);
+    upsert_message(&mut db, &message).await.unwrap();
 
-    spam_detection_and_handling(ctx, &mut db_conn, &message)
+    spam_detection_and_handling(ctx, &mut db, &message)
         .await
         .unwrap();
 

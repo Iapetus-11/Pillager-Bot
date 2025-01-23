@@ -1,6 +1,6 @@
 use sqlx::FromRow;
 
-#[derive(Debug, FromRow)]
+#[derive(Debug, Clone, FromRow)]
 pub struct GuildConfig {
     pub id: i64,
     pub message_logging_channel_id: Option<i64>,

@@ -3,7 +3,10 @@ use poise::serenity_prelude::{self as serenity, json::json};
 use regex::Regex;
 use std::error::Error as StdError;
 
-use crate::{database::{models, Db}, utils::text::truncate};
+use crate::{
+    database::{models, Db},
+    utils::text::truncate,
+};
 
 use super::{
     guild_config_service::get_or_create_guild_config, message_service::get_recent_user_messages,
@@ -41,13 +44,10 @@ pub async fn spam_detection_and_handling(
     let autoban_spam_message_threshold =
         guild_config.autoban_spam_message_threshold.unwrap() as i32;
 
-    let author_messages = get_recent_user_messages(
-        db_conn,
-        message.author_id,
-        guild_id,
-        TimeDelta::minutes(5),
-        50,
-    );
+    let author_messages =
+        get_recent_user_messages(db, message.author_id, guild_id, TimeDelta::minutes(5), 50)
+            .await
+            .unwrap();
     let mut messages_with_links_count = 0;
     let mut messages_with_discord_invite_count = 0;
 

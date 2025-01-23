@@ -9,11 +9,7 @@ mod event_handlers;
 mod services;
 mod utils;
 
-static MIGRATOR: Migrator = if cfg!(any(target_os = "linux", target_os = "macos")) {
-    sqlx::migrate!("./src/database/migrations")
-} else {
-    sqlx::migrate!(".\\src\\database\\migrations")
-};
+static DB_MIGRATOR: Migrator = sqlx::migrate!();
 
 struct Data {
     db: sqlx::Pool<sqlx::Postgres>,
@@ -71,6 +67,9 @@ async fn main() {
                     .max_connections(config.database_pool_size)
                     .connect(&config.database_url)
                     .await?;
+
+                DB_MIGRATOR.run(&db).await.unwrap();
+                println!("Database migrations ran");
 
                 Ok(Data { db })
             })

@@ -38,7 +38,9 @@ pub async fn config_message_logging_channel(
 
     guild_config.message_logging_channel_id = channel_id;
 
-    update_or_create_guild_config(&mut db, &guild_config).await.unwrap();
+    update_or_create_guild_config(&mut db, &guild_config)
+        .await
+        .unwrap();
 
     if let Some(channel) = channel {
         ctx.say(format!(
@@ -112,7 +114,9 @@ pub async fn config_spam_autoban(
         .unwrap();
     }
 
-    update_or_create_guild_config(&mut db, &guild_config).await.unwrap();
+    update_or_create_guild_config(&mut db, &guild_config)
+        .await
+        .unwrap();
 
     Ok(())
 }

@@ -2,7 +2,7 @@ use chrono::{self, Utc};
 use poise::serenity_prelude;
 use sqlx::FromRow;
 
-#[derive(Debug, FromRow)]
+#[derive(Debug, Clone, FromRow)]
 pub struct Message {
     pub id: i64,
     pub author_id: i64,
