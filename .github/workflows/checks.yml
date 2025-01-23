@@ -35,7 +35,10 @@ jobs:
         run: |
           sqlx database create
           sqlx migrate run
-          sqlx prepare
+          cargo sqlx prepare
+
+      - name: Build project
+        run: cargo build
 
       - name: Check formatting
         uses: actions-rust-lang/rustfmt@v1
