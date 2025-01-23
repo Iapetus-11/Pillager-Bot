@@ -1,5 +1,0 @@
-[migrations_directory]
-dir = "src/database/migrations"
-
-[print_schema]
-file = "src/database/schema.rs"

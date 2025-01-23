@@ -3,8 +3,21 @@ name: Checks
 on: [ push, pull_request, workflow_dispatch ]
 
 jobs:
-  test:
+  checks:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
       - uses: actions/checkout@v4
@@ -12,6 +25,22 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: rustfmt,clippy
+
+      - name: Install SQLX CLI
+        run: cargo install sqlx-cli
+
+      - name: Setup database
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/pillager-bot
+        run: |
+          sqlx database create
+          sqlx migrate run
+
+      - name: Check sqlx
+        run: cargo sqlx prepare --check
+
+      - name: Build project
+        run: cargo build
 
       - name: Check formatting
         uses: actions-rust-lang/rustfmt@v1

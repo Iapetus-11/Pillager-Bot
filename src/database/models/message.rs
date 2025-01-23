@@ -1,12 +1,8 @@
 use chrono::{self, Utc};
-use diesel::prelude::*;
 use poise::serenity_prelude;
+use sqlx::FromRow;
 
-use crate::database::schema::messages;
-
-#[derive(Debug, Clone, Selectable, Queryable, Insertable, AsChangeset)]
-#[diesel(table_name = messages, check_for_backend(diesel::pg::Pg))]
-#[diesel(treat_none_as_null = true)]
+#[derive(Debug, Clone, FromRow)]
 pub struct Message {
     pub id: i64,
     pub author_id: i64,

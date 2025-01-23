@@ -5,16 +5,16 @@ WORKDIR /pillager-bot
 RUN apt-get update
 RUN apt-get install libpq-dev -y
 
-COPY Cargo.lock Cargo.toml diesel.toml ./
-
-# Install dependencies, but build a dummy project to cache deps separately from project files to avoid
-# unnecessarily download+building dependencies
-RUN mkdir src && echo '// dummy file\nfn main() {}' > ./src/main.rs
-RUN cargo build
+COPY Cargo.lock Cargo.toml ./
 
 COPY src/ ./src/
+COPY migrations/ ./migrations/
+COPY .sqlx ./.sqlx/
 
-RUN cargo install --path . --root ./build/
+# TODO: Cache dependencies in separate layer
+
+ENV SQLX_OFFLINE=true
+RUN cargo build --locked --profile release
 
 FROM debian:bullseye-slim AS runner
 
@@ -23,6 +23,6 @@ RUN apt-get install libpq5 -y
 
 WORKDIR /pillager-bot
 
-COPY --from=build /pillager-bot/build/bin/Pillager-Bot .
+COPY --from=build /pillager-bot/target/release/Pillager-Bot .
 
 CMD ["./Pillager-Bot"]

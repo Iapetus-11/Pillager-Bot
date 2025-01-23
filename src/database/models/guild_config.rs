@@ -1,10 +1,6 @@
-use diesel::prelude::*;
+use sqlx::FromRow;
 
-use crate::database::schema::guild_configs;
-
-#[derive(Debug, Clone, Selectable, Queryable, Insertable, AsChangeset)]
-#[diesel(table_name = guild_configs, check_for_backend(diesel::pg::Pg))]
-#[diesel(treat_none_as_null = true)]
+#[derive(Debug, Clone, FromRow)]
 pub struct GuildConfig {
     pub id: i64,
     pub message_logging_channel_id: Option<i64>,

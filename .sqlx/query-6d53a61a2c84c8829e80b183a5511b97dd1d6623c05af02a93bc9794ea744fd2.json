@@ -1,0 +1,17 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO guild_configs (id, message_logging_channel_id, autoban_spam_message_threshold, automated_ban_logging_channel_id) VALUES ($1, $2, $3, $4) ON CONFLICT (id) DO UPDATE SET message_logging_channel_id = $2, autoban_spam_message_threshold = $3, automated_ban_logging_channel_id = $4",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int2",
+        "Int8"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "6d53a61a2c84c8829e80b183a5511b97dd1d6623c05af02a93bc9794ea744fd2"
+}

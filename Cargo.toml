@@ -5,9 +5,8 @@ edition = "2021"
 
 [dependencies]
 chrono = "0.4.38"
-diesel = { version = "2.2.1", features = ["r2d2", "chrono", "postgres"] }
-diesel_migrations = "2.2.0"
 dotenv = "0.15.0"
 poise = "0.6.1"
 regex = "1.10.5"
+sqlx = { version = "0.8.3", features = ["postgres", "runtime-tokio-rustls", "chrono"] }
 tokio = { version = "1.38.0", features = ["full"] }

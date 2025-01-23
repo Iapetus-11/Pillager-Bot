@@ -3,7 +3,7 @@
 
 ## Technologies
 - [Serenity](https://github.com/serenity-rs/serenity) with [Poise](https://github.com/serenity-rs/poise)
-- [Diesel ORM](https://diesel.rs/)
+- [SQLX](https://github.com/launchbadge/sqlx)
 
 ## Features
 - Automated spam prevention
@@ -27,8 +27,7 @@
 3. Run `docker compose up`
 
 ### Create Database Migrations
-1. Generate a blank migration with `diesel migration generate <name>`
-2. Write the SQL for your migration
-3. Run your migration with `diesel migration run`
-4. (Optional) If necessary, edit and then re-run your migration with `diesel migration redo`
-5. Update `schema.rs` with `diesel print-schema > src/database/schema.rs`
+1. Ensure you have the SQLX CLI installed: `cargo install sqlx-cli`
+1. Generate a blank migration with `sqlx migrate add`
+2. Write the up and down SQL for your migration
+3. Run your migration with `sqlx migrate run`

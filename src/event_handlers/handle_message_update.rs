@@ -21,9 +21,9 @@ pub async fn handle_message_update(
         return Ok(());
     }
 
-    let mut db_conn = data.db_pool.get().expect("A valid database connection");
+    let mut db = data.db.clone();
 
-    let existing_message = get_message(&mut db_conn, event.id.into());
+    let existing_message = get_message(&mut db, event.id.into()).await.unwrap();
 
     let new_message: Option<models::Message> = match new {
         Some(new_msg) => Some(new_msg.into()),
@@ -44,7 +44,7 @@ pub async fn handle_message_update(
 
     if let Some(new_message) = new_message {
         if new_message.author_id != i64::from(ctx.cache.current_user().id) {
-            upsert_message(&mut db_conn, &new_message);
+            upsert_message(&mut db, &new_message).await.unwrap();
         }
     }
 
@@ -60,7 +60,7 @@ pub async fn handle_message_update(
 
     let guild_id = existing_message.guild_id.unwrap();
 
-    let guild_config = get_or_create_guild_config(&mut db_conn, guild_id);
+    let guild_config = get_or_create_guild_config(&mut db, guild_id).await.unwrap();
 
     if let Some(message_logging_channel_id) = guild_config.message_logging_channel_id {
         ctx.http
