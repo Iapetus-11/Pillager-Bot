@@ -1,8 +1,9 @@
 use chrono::TimeDelta;
 use poise::serenity_prelude::{self as serenity, json::json};
 use regex::Regex;
+use std::error::Error as StdError;
 
-use crate::{database::models, utils::text::truncate, Error};
+use crate::{database::{models, Db}, utils::text::truncate};
 
 use super::{
     guild_config_service::get_or_create_guild_config, message_service::get_recent_user_messages,
@@ -10,9 +11,9 @@ use super::{
 
 pub async fn spam_detection_and_handling(
     ctx: &serenity::Context,
-    db_conn: &mut PgConnection,
+    db: &mut Db,
     message: &models::Message,
-) -> Result<(), Error> {
+) -> Result<(), Box<dyn StdError>> {
     if message.guild_id.is_none() {
         return Ok(());
     }
@@ -31,7 +32,7 @@ pub async fn spam_detection_and_handling(
 
     let guild_id = message.guild_id.unwrap();
 
-    let guild_config = get_or_create_guild_config(db_conn, guild_id);
+    let guild_config = get_or_create_guild_config(db, guild_id).await?;
 
     if guild_config.autoban_spam_message_threshold.is_none() {
         return Ok(());

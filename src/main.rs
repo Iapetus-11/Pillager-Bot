@@ -9,7 +9,11 @@ mod event_handlers;
 mod services;
 mod utils;
 
-static MIGRATOR: Migrator = sqlx::migrate!("./src/database/migrations");
+static MIGRATOR: Migrator = if cfg!(any(target_os = "linux", target_os = "macos")) {
+    sqlx::migrate!("./src/database/migrations")
+} else {
+    sqlx::migrate!(".\\src\\database\\migrations")
+};
 
 struct Data {
     db: sqlx::Pool<sqlx::Postgres>,
