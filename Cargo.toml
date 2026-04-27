@@ -4,9 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-chrono = "0.4.38"
-dotenv = "0.15.0"
-poise = "0.6.1"
-regex = "1.10.5"
-sqlx = { version = "0.8.3", features = ["postgres", "runtime-tokio-rustls", "chrono"] }
-tokio = { version = "1.38.0", features = ["full"] }
+chrono = "0.4.44"
+dotenvy = "0.15.7"
+poise = "0.6.2"
+regex = "1.12.3"
+sqlx = { version = "0.8.6", features = ["postgres", "runtime-tokio-rustls", "chrono"] }
+tokio = { version = "1.52.1", features = ["macros", "rt-multi-thread"] }

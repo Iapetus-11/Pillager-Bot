@@ -32,7 +32,7 @@ fn load_env<T: FromStr>(key: &str, default: Option<T>) -> T {
 }
 
 pub fn load_config() -> Config {
-    let _ = dotenv::dotenv();
+    let _ = dotenvy::dotenv();
 
     Config {
         discord_token: load_env("DISCORD_TOKEN", None),
