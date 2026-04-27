@@ -1,9 +1,9 @@
-FROM rust:slim-bullseye AS build
+FROM rust:1.95-alpine3.23 AS build
 
 WORKDIR /pillager-bot
 
-RUN apt-get update
-RUN apt-get install libpq-dev -y
+RUN apk update
+RUN apk add postgresql-dev
 
 COPY Cargo.lock Cargo.toml ./
 
@@ -16,10 +16,10 @@ COPY .sqlx ./.sqlx/
 ENV SQLX_OFFLINE=true
 RUN cargo build --locked --profile release
 
-FROM debian:bullseye-slim AS runner
+FROM alpine:3.23 AS runner
 
-RUN apt-get update
-RUN apt-get install libpq5 -y
+RUN apk update
+RUN apk add libpq
 
 WORKDIR /pillager-bot
 
