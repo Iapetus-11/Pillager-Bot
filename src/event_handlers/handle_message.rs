@@ -19,11 +19,11 @@ pub async fn handle_message(
 
     let mut db = data.db.clone();
 
-    let message: models::Message = message.into();
+    let db_message: models::Message = message.into();
 
-    upsert_message(&mut db, &message).await.unwrap();
+    upsert_message(&mut db, &db_message).await.unwrap();
 
-    spam_detection_and_handling(ctx, &mut db, &message)
+    spam_detection_and_handling(ctx, &mut db, &db_message, &message.attachments)
         .await
         .unwrap();
 

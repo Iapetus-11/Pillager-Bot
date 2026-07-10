@@ -6,4 +6,6 @@ pub struct GuildConfig {
     pub message_logging_channel_id: Option<i64>,
     pub autoban_spam_message_threshold: Option<i16>,
     pub automated_ban_logging_channel_id: Option<i64>,
+    pub autoban_spam_image_message_threshold: Option<i16>,
+    pub autoban_spam_window_minutes: Option<i16>,
 }

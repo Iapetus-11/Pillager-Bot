@@ -51,3 +51,45 @@ pub async fn get_recent_user_messages(
         author_id, guild_id, (Utc::now() - since), limit,
     ).fetch_all(&*db).await?)
 }
+
+pub async fn upsert_message_attachment_hashes(
+    db: &mut Db,
+    message_id: i64,
+    hashes: &[Vec<u8>],
+) -> Result<(), Box<dyn StdError>> {
+    for hash in hashes {
+        sqlx::query!(
+            "INSERT INTO discord_message_attachment_hashes (message_id, hash) \
+            VALUES ($1, $2) \
+            ON CONFLICT DO NOTHING",
+            message_id,
+            hash,
+        )
+        .execute(&*db)
+        .await?;
+    }
+
+    Ok(())
+}
+
+pub async fn count_recent_user_messages_with_attachment_hashes(
+    db: &mut Db,
+    author_id: i64,
+    guild_id: i64,
+    since: TimeDelta,
+    hashes: &[Vec<u8>],
+) -> Result<i64, Box<dyn StdError>> {
+    Ok(sqlx::query_scalar!(
+        r#"SELECT COUNT(DISTINCT m.id) AS "count!: i64"
+        FROM discord_messages m
+        JOIN discord_message_attachment_hashes h ON h.message_id = m.id
+        WHERE m.author_id = $1 AND m.guild_id = $2 AND m.created_at >= $3
+          AND TRIM(m.content) = '' AND h.hash = ANY($4)"#,
+        author_id,
+        guild_id,
+        (Utc::now() - since),
+        hashes,
+    )
+    .fetch_one(&*db)
+    .await?)
+}

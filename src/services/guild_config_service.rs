@@ -22,14 +22,16 @@ pub async fn get_or_create_guild_config(
         message_logging_channel_id: None,
         autoban_spam_message_threshold: None,
         automated_ban_logging_channel_id: None,
+        autoban_spam_image_message_threshold: None,
+        autoban_spam_window_minutes: None,
     };
 
     sqlx::query!(
         "INSERT INTO guild_configs \
-        (id, message_logging_channel_id, autoban_spam_message_threshold, automated_ban_logging_channel_id) \
-        VALUES ($1, $2, $3, $4) \
+        (id, message_logging_channel_id, autoban_spam_message_threshold, automated_ban_logging_channel_id, autoban_spam_image_message_threshold, autoban_spam_window_minutes) \
+        VALUES ($1, $2, $3, $4, $5, $6) \
         ON CONFLICT DO NOTHING",
-        guild_config.id, guild_config.message_logging_channel_id, guild_config.autoban_spam_message_threshold, guild_config.automated_ban_logging_channel_id
+        guild_config.id, guild_config.message_logging_channel_id, guild_config.autoban_spam_message_threshold, guild_config.automated_ban_logging_channel_id, guild_config.autoban_spam_image_message_threshold, guild_config.autoban_spam_window_minutes
     ).execute(&*db).await?;
 
     Ok(guild_config)
@@ -41,11 +43,11 @@ pub async fn update_or_create_guild_config(
 ) -> Result<(), Box<dyn StdError>> {
     sqlx::query!(
         "INSERT INTO guild_configs \
-        (id, message_logging_channel_id, autoban_spam_message_threshold, automated_ban_logging_channel_id) \
-        VALUES ($1, $2, $3, $4) \
+        (id, message_logging_channel_id, autoban_spam_message_threshold, automated_ban_logging_channel_id, autoban_spam_image_message_threshold, autoban_spam_window_minutes) \
+        VALUES ($1, $2, $3, $4, $5, $6) \
         ON CONFLICT (id) DO UPDATE \
-        SET message_logging_channel_id = $2, autoban_spam_message_threshold = $3, automated_ban_logging_channel_id = $4",
-        guild_config.id, guild_config.message_logging_channel_id, guild_config.autoban_spam_message_threshold, guild_config.automated_ban_logging_channel_id
+        SET message_logging_channel_id = $2, autoban_spam_message_threshold = $3, automated_ban_logging_channel_id = $4, autoban_spam_image_message_threshold = $5, autoban_spam_window_minutes = $6",
+        guild_config.id, guild_config.message_logging_channel_id, guild_config.autoban_spam_message_threshold, guild_config.automated_ban_logging_channel_id, guild_config.autoban_spam_image_message_threshold, guild_config.autoban_spam_window_minutes
     ).execute(&*db).await?;
 
     Ok(())
