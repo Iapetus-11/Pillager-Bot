@@ -3,7 +3,7 @@ FROM rust:1.95-alpine3.23 AS build
 WORKDIR /pillager-bot
 
 RUN apk update
-RUN apk add postgresql-dev
+RUN apk add postgresql-dev openssl-dev pkgconf
 
 COPY Cargo.lock Cargo.toml ./
 
@@ -19,7 +19,7 @@ RUN cargo build --locked --profile release
 FROM alpine:3.23 AS runner
 
 RUN apk update
-RUN apk add libpq
+RUN apk add libpq libssl3 ca-certificates
 
 WORKDIR /pillager-bot
 
