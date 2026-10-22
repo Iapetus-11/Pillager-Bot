@@ -13,7 +13,8 @@ use crate::{
     subcommands(
         "config_message_logging_channel",
         "config_spam_autoban",
-        "config_spam_autoban_exempt_role"
+        "config_spam_autoban_exempt_role",
+        "config_spam_autoban_exempt_list"
     )
 )]
 pub async fn config(_: Context<'_>) -> Result<(), Error> {
@@ -157,17 +158,6 @@ pub async fn config_spam_autoban_exempt_role(
         .await
         .unwrap();
 
-    let exempt_roles_list = if guild_config.autoban_exempt_role_ids.is_empty() {
-        "none".to_string()
-    } else {
-        guild_config
-            .autoban_exempt_role_ids
-            .iter()
-            .map(|id| format!("<@&{}>", id))
-            .collect::<Vec<_>>()
-            .join(", ")
-    };
-
     ctx.send(
         poise::CreateReply::default()
             .content(format!(
@@ -180,7 +170,7 @@ pub async fn config_spam_autoban_exempt_role(
                     "now be auto-banned for spam again"
                 },
                 ctx.cache().current_user().mention(),
-                exempt_roles_list,
+                format_role_list(&guild_config.autoban_exempt_role_ids),
             ))
             // Don't ping the roles we're listing
             .allowed_mentions(serenity::CreateAllowedMentions::new()),
@@ -189,4 +179,45 @@ pub async fn config_spam_autoban_exempt_role(
     .unwrap();
 
     Ok(())
+}
+
+/// View which roles are exempt from spam auto-bans
+#[poise::command(
+    slash_command,
+    guild_only,
+    rename = "spam_autoban_exempt_list",
+    required_permissions = "ADMINISTRATOR"
+)]
+pub async fn config_spam_autoban_exempt_list(ctx: Context<'_>) -> Result<(), Error> {
+    let guild_id: i64 = ctx.guild_id().unwrap().into();
+
+    let mut db = ctx.data().db.clone();
+
+    let guild_config = get_or_create_guild_config(&mut db, guild_id).await.unwrap();
+
+    ctx.send(
+        poise::CreateReply::default()
+            .content(format!(
+                "Roles exempt from spam auto-bans: {}",
+                format_role_list(&guild_config.autoban_exempt_role_ids),
+            ))
+            // Don't ping the roles we're listing
+            .allowed_mentions(serenity::CreateAllowedMentions::new()),
+    )
+    .await
+    .unwrap();
+
+    Ok(())
+}
+
+fn format_role_list(role_ids: &[i64]) -> String {
+    if role_ids.is_empty() {
+        return "none".to_string();
+    }
+
+    role_ids
+        .iter()
+        .map(|role_id| format!("<@&{}>", role_id))
+        .collect::<Vec<_>>()
+        .join(", ")
 }
