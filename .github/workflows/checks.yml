@@ -37,6 +37,8 @@ jobs:
           sqlx migrate run
 
       - name: Check sqlx
+        env:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/pillager-bot
         run: cargo sqlx prepare --check
 
       - name: Build project

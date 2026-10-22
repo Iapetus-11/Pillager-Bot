@@ -6,32 +6,68 @@
       {
         "ordinal": 0,
         "name": "id",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "discord_messages",
+            "name": "id"
+          }
+        }
       },
       {
         "ordinal": 1,
         "name": "author_id",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "discord_messages",
+            "name": "author_id"
+          }
+        }
       },
       {
         "ordinal": 2,
         "name": "channel_id",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "discord_messages",
+            "name": "channel_id"
+          }
+        }
       },
       {
         "ordinal": 3,
         "name": "content",
-        "type_info": "Varchar"
+        "type_info": "Varchar",
+        "origin": {
+          "Table": {
+            "table": "discord_messages",
+            "name": "content"
+          }
+        }
       },
       {
         "ordinal": 4,
         "name": "guild_id",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "discord_messages",
+            "name": "guild_id"
+          }
+        }
       },
       {
         "ordinal": 5,
         "name": "created_at",
-        "type_info": "Timestamptz"
+        "type_info": "Timestamptz",
+        "origin": {
+          "Table": {
+            "table": "discord_messages",
+            "name": "created_at"
+          }
+        }
       }
     ],
     "parameters": {
