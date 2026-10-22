@@ -64,7 +64,7 @@ pub async fn config_message_logging_channel(
     Ok(())
 }
 
-/// Config auto-bans triggered by spam messages (links, invites, or images), leave the threshold option blank to disable auto-bans
+/// Config spam auto-bans (links, invites, images), leave the threshold blank to disable auto-bans
 #[poise::command(
     slash_command,
     guild_only,
@@ -73,7 +73,7 @@ pub async fn config_message_logging_channel(
 )]
 pub async fn config_spam_autoban(
     ctx: Context<'_>,
-    #[description = "How many spam messages (links/invites/images) a user can send within 5 minutes before being auto-banned (recommended is 5)"]
+    #[description = "How many links/invites/images a user can send in 5 minutes before being auto-banned (recommended 5)"]
     threshold: Option<i16>,
     #[description = "The channel to log automated bans to"] log_channel: Option<serenity::Channel>,
 ) -> Result<(), Error> {
