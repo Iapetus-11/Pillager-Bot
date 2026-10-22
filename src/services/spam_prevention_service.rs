@@ -16,7 +16,6 @@ pub async fn spam_detection_and_handling(
     ctx: &serenity::Context,
     db: &mut Db,
     message: &models::Message,
-    author_role_ids: &[i64],
 ) -> Result<(), Box<dyn StdError>> {
     if message.guild_id.is_none() {
         return Ok(());
@@ -39,14 +38,6 @@ pub async fn spam_detection_and_handling(
     let guild_config = get_or_create_guild_config(db, guild_id).await?;
 
     if guild_config.autoban_spam_message_threshold.is_none() {
-        return Ok(());
-    }
-
-    // Users with an exempt role are never auto-banned
-    if author_role_ids
-        .iter()
-        .any(|role_id| guild_config.autoban_exempt_role_ids.contains(role_id))
-    {
         return Ok(());
     }
 
