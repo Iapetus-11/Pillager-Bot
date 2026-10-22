@@ -6,46 +6,22 @@
       {
         "ordinal": 0,
         "name": "id",
-        "type_info": "Int8",
-        "origin": {
-          "Table": {
-            "table": "guild_configs",
-            "name": "id"
-          }
-        }
+        "type_info": "Int8"
       },
       {
         "ordinal": 1,
         "name": "message_logging_channel_id",
-        "type_info": "Int8",
-        "origin": {
-          "Table": {
-            "table": "guild_configs",
-            "name": "message_logging_channel_id"
-          }
-        }
+        "type_info": "Int8"
       },
       {
         "ordinal": 2,
         "name": "autoban_spam_message_threshold",
-        "type_info": "Int2",
-        "origin": {
-          "Table": {
-            "table": "guild_configs",
-            "name": "autoban_spam_message_threshold"
-          }
-        }
+        "type_info": "Int2"
       },
       {
         "ordinal": 3,
         "name": "automated_ban_logging_channel_id",
-        "type_info": "Int8",
-        "origin": {
-          "Table": {
-            "table": "guild_configs",
-            "name": "automated_ban_logging_channel_id"
-          }
-        }
+        "type_info": "Int8"
       }
     ],
     "parameters": {
