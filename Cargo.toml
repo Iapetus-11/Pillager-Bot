@@ -6,7 +6,8 @@ edition = "2021"
 [dependencies]
 chrono = "0.4.45"
 dotenvy = "0.15.7"
-poise = "0.6.2"
-regex = "1.12.4"
+poise = { version = "0.6.2", default-features = false, features = ["cache", "chrono", "handle_panics"] }
+serenity = { version = "0.12.5", default-features = false, features = ["native_tls_backend"] }
+regex = "1.13.1"
 sqlx = { version = "0.9.0", default-features = false, features = ["postgres", "runtime-tokio", "tls-rustls", "chrono", "macros", "migrate"] }
-tokio = { version = "1.52.3", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.54.0", features = ["macros", "rt-multi-thread"] }
