@@ -23,7 +23,7 @@ pub async fn handle_message(
     let author_role_ids: Vec<i64> = message
         .member
         .as_ref()
-        .map(|member| member.roles.iter().map(|role_id| (*role_id).into()).collect())
+        .map(|member| member.roles.iter().map(|id| i64::from(*id)).collect())
         .unwrap_or_default();
 
     let message: models::Message = message.into();
