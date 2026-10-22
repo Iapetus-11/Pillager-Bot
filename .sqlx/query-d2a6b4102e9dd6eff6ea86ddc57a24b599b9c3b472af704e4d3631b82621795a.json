@@ -6,22 +6,57 @@
       {
         "ordinal": 0,
         "name": "id",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "guild_configs",
+            "name": "id"
+          }
+        }
       },
       {
         "ordinal": 1,
         "name": "message_logging_channel_id",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "guild_configs",
+            "name": "message_logging_channel_id"
+          }
+        }
       },
       {
         "ordinal": 2,
         "name": "autoban_spam_message_threshold",
-        "type_info": "Int2"
+        "type_info": "Int2",
+        "origin": {
+          "Table": {
+            "table": "guild_configs",
+            "name": "autoban_spam_message_threshold"
+          }
+        }
       },
       {
         "ordinal": 3,
         "name": "automated_ban_logging_channel_id",
-        "type_info": "Int8"
+        "type_info": "Int8",
+        "origin": {
+          "Table": {
+            "table": "guild_configs",
+            "name": "automated_ban_logging_channel_id"
+          }
+        }
+      },
+      {
+        "ordinal": 4,
+        "name": "autoban_exempt_role_ids",
+        "type_info": "Int8Array",
+        "origin": {
+          "Table": {
+            "table": "guild_configs",
+            "name": "autoban_exempt_role_ids"
+          }
+        }
       }
     ],
     "parameters": {
@@ -33,7 +68,8 @@
       false,
       true,
       true,
-      true
+      true,
+      false
     ]
   },
   "hash": "d2a6b4102e9dd6eff6ea86ddc57a24b599b9c3b472af704e4d3631b82621795a"

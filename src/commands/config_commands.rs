@@ -1,12 +1,7 @@
 use poise::serenity_prelude::{self as serenity, Mentionable};
 
 use crate::{
-    services::{
-        guild_config_service::{get_or_create_guild_config, update_or_create_guild_config},
-        spam_prevention_service::{
-            DEFAULT_IMAGE_SPAM_WINDOW_SECONDS, DEFAULT_MESSAGE_SPAM_WINDOW_SECONDS,
-        },
-    },
+    services::guild_config_service::{get_or_create_guild_config, update_or_create_guild_config},
     utils::emojis::YES_EMOJI,
     Context, Error,
 };
@@ -15,7 +10,11 @@ use crate::{
     slash_command,
     subcommand_required,
     guild_only,
-    subcommands("config_message_logging_channel", "config_spam_autoban")
+    subcommands(
+        "config_message_logging_channel",
+        "config_spam_autoban",
+        "config_spam_autoban_exempt_role"
+    )
 )]
 pub async fn config(_: Context<'_>) -> Result<(), Error> {
     Ok(())
@@ -69,7 +68,7 @@ pub async fn config_message_logging_channel(
     Ok(())
 }
 
-/// Config auto-bans triggered by spam messages (links/invites) or by the same attachment(s) being posted across multiple channels. Leave the threshold blank to disable the detector.
+/// Config auto-bans triggered by spam messages (links, invites, or images), leave the threshold option blank to disable auto-bans
 #[poise::command(
     slash_command,
     guild_only,
@@ -78,14 +77,8 @@ pub async fn config_message_logging_channel(
 )]
 pub async fn config_spam_autoban(
     ctx: Context<'_>,
-    #[description = "How many link/invite messages a user can send before being auto-banned (recommended is 5)"]
-    message_threshold: Option<i16>,
-    #[description = "How many seconds to look back for link/invite messages (default 120)"]
-    message_window_seconds: Option<i16>,
-    #[description = "How many different channels the same attachment(s) can be posted in before being auto-banned (recommended is 3)"]
-    image_channel_threshold: Option<i16>,
-    #[description = "How many seconds to look back for the same attachment(s) across channels (default 10)"]
-    image_window_seconds: Option<i16>,
+    #[description = "How many spam messages (links/invites/images) a user can send within 5 minutes before being auto-banned (recommended is 5)"]
+    threshold: Option<i16>,
     #[description = "The channel to log automated bans to"] log_channel: Option<serenity::Channel>,
 ) -> Result<(), Error> {
     let guild_id: i64 = ctx.guild_id().unwrap().into();
@@ -97,56 +90,103 @@ pub async fn config_spam_autoban(
 
     let mut guild_config = get_or_create_guild_config(&mut db, guild_id).await.unwrap();
 
-    guild_config.autoban_spam_message_threshold = message_threshold;
-    guild_config.autoban_spam_message_window_seconds = message_window_seconds;
-    guild_config.autoban_image_spam_channel_threshold = image_channel_threshold;
-    guild_config.autoban_image_spam_window_seconds = image_window_seconds;
+    guild_config.autoban_spam_message_threshold = threshold;
     guild_config.automated_ban_logging_channel_id = channel_id;
 
-    let mut message_parts = Vec::<String>::new();
+    if let Some(threshold) = threshold {
+        let mut message_parts = Vec::<String>::new();
 
-    if let Some(threshold) = message_threshold {
         message_parts.push(format!(
-            "auto-ban users sending greater than {} link/invite messages within {} seconds",
+            "{} {} will auto-ban users sending greater than {} spam messages",
+            YES_EMOJI,
+            ctx.cache().current_user().mention(),
             threshold,
-            message_window_seconds.unwrap_or(DEFAULT_MESSAGE_SPAM_WINDOW_SECONDS as i16),
         ));
-    }
 
-    if let Some(threshold) = image_channel_threshold {
-        message_parts.push(format!(
-            "auto-ban users posting the same attachment(s) across {} or more channels within {} seconds",
-            threshold,
-            image_window_seconds.unwrap_or(DEFAULT_IMAGE_SPAM_WINDOW_SECONDS as i16),
-        ));
-    }
+        if let Some(log_channel) = &log_channel {
+            message_parts.push(format!("and log those bans in {}", log_channel.mention()))
+        }
 
-    if message_parts.is_empty() {
+        ctx.say(message_parts.join(" ")).await.unwrap();
+    } else {
         ctx.say(format!(
-            "{} {} will not auto-ban users for spam",
+            "{} {} will not auto-ban users for spam messages",
             YES_EMOJI,
             ctx.cache().current_user().mention(),
         ))
         .await
         .unwrap();
-    } else {
-        let mut full_message = format!(
-            "{} {} will {}",
-            YES_EMOJI,
-            ctx.cache().current_user().mention(),
-            message_parts.join(", and will "),
-        );
-
-        if let Some(log_channel) = &log_channel {
-            full_message.push_str(&format!(", logging bans in {}", log_channel.mention()));
-        }
-
-        ctx.say(full_message).await.unwrap();
     }
 
     update_or_create_guild_config(&mut db, &guild_config)
         .await
         .unwrap();
+
+    Ok(())
+}
+
+/// Toggle whether a role is exempt from spam auto-bans
+#[poise::command(
+    slash_command,
+    guild_only,
+    rename = "spam_autoban_exempt_role",
+    required_permissions = "ADMINISTRATOR"
+)]
+pub async fn config_spam_autoban_exempt_role(
+    ctx: Context<'_>,
+    #[description = "The role to add to or remove from the exemption list"] role: serenity::Role,
+) -> Result<(), Error> {
+    let guild_id: i64 = ctx.guild_id().unwrap().into();
+    let role_id: i64 = role.id.into();
+
+    let mut db = ctx.data().db.clone();
+
+    let mut guild_config = get_or_create_guild_config(&mut db, guild_id).await.unwrap();
+
+    // Running the command on an already exempt role removes it, otherwise it's added
+    let exempt_role_ids = &mut guild_config.autoban_exempt_role_ids;
+    let now_exempt = if let Some(index) = exempt_role_ids.iter().position(|id| *id == role_id) {
+        exempt_role_ids.remove(index);
+        false
+    } else {
+        exempt_role_ids.push(role_id);
+        true
+    };
+
+    update_or_create_guild_config(&mut db, &guild_config)
+        .await
+        .unwrap();
+
+    let exempt_roles_list = if guild_config.autoban_exempt_role_ids.is_empty() {
+        "none".to_string()
+    } else {
+        guild_config
+            .autoban_exempt_role_ids
+            .iter()
+            .map(|id| format!("<@&{}>", id))
+            .collect::<Vec<_>>()
+            .join(", ")
+    };
+
+    ctx.send(
+        poise::CreateReply::default()
+            .content(format!(
+                "{} Users with {} will {} by {}\nExempt roles: {}",
+                YES_EMOJI,
+                role.mention(),
+                if now_exempt {
+                    "no longer be auto-banned for spam"
+                } else {
+                    "now be auto-banned for spam again"
+                },
+                ctx.cache().current_user().mention(),
+                exempt_roles_list,
+            ))
+            // Don't ping the roles we're listing
+            .allowed_mentions(serenity::CreateAllowedMentions::new()),
+    )
+    .await
+    .unwrap();
 
     Ok(())
 }

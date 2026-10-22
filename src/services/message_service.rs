@@ -8,17 +8,17 @@ use crate::database::Db;
 pub async fn upsert_message(db: &mut Db, message: &Message) -> Result<(), Box<dyn StdError>> {
     sqlx::query!(
         "INSERT INTO discord_messages \
-        (id, author_id, channel_id, content, guild_id, created_at, attachment_sigs) \
+        (id, author_id, channel_id, content, guild_id, created_at, has_image) \
         VALUES ($1, $2, $3, $4, $5, $6, $7) \
         ON CONFLICT (id) DO \
-        UPDATE SET author_id = $2, channel_id = $3, content = $4, guild_id = $5, created_at = $6, attachment_sigs = $7",
+        UPDATE SET author_id = $2, channel_id = $3, content = $4, guild_id = $5, created_at = $6, has_image = $7",
         message.id,
         message.author_id,
         message.channel_id,
         message.content,
         message.guild_id,
         message.created_at,
-        &message.attachment_sigs
+        message.has_image
     )
     .execute(&*db)
     .await?;
