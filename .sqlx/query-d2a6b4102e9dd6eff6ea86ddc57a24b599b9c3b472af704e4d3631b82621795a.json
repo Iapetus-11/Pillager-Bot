@@ -46,6 +46,17 @@
             "name": "automated_ban_logging_channel_id"
           }
         }
+      },
+      {
+        "ordinal": 4,
+        "name": "autoban_exempt_role_ids",
+        "type_info": "Int8Array",
+        "origin": {
+          "Table": {
+            "table": "guild_configs",
+            "name": "autoban_exempt_role_ids"
+          }
+        }
       }
     ],
     "parameters": {
@@ -57,7 +68,8 @@
       false,
       true,
       true,
-      true
+      true,
+      false
     ]
   },
   "hash": "d2a6b4102e9dd6eff6ea86ddc57a24b599b9c3b472af704e4d3631b82621795a"
