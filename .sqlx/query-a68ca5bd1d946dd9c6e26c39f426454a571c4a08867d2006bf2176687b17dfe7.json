@@ -68,6 +68,17 @@
             "name": "created_at"
           }
         }
+      },
+      {
+        "ordinal": 6,
+        "name": "has_image",
+        "type_info": "Bool",
+        "origin": {
+          "Table": {
+            "table": "discord_messages",
+            "name": "has_image"
+          }
+        }
       }
     ],
     "parameters": {
@@ -81,6 +92,7 @@
       false,
       false,
       true,
+      false,
       false
     ]
   },
