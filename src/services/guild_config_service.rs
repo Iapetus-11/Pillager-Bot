@@ -22,14 +22,15 @@ pub async fn get_or_create_guild_config(
         message_logging_channel_id: None,
         autoban_spam_message_threshold: None,
         automated_ban_logging_channel_id: None,
+        autoban_exempt_role_ids: Vec::new(),
     };
 
     sqlx::query!(
         "INSERT INTO guild_configs \
-        (id, message_logging_channel_id, autoban_spam_message_threshold, automated_ban_logging_channel_id) \
-        VALUES ($1, $2, $3, $4) \
+        (id, message_logging_channel_id, autoban_spam_message_threshold, automated_ban_logging_channel_id, autoban_exempt_role_ids) \
+        VALUES ($1, $2, $3, $4, $5) \
         ON CONFLICT DO NOTHING",
-        guild_config.id, guild_config.message_logging_channel_id, guild_config.autoban_spam_message_threshold, guild_config.automated_ban_logging_channel_id
+        guild_config.id, guild_config.message_logging_channel_id, guild_config.autoban_spam_message_threshold, guild_config.automated_ban_logging_channel_id, &guild_config.autoban_exempt_role_ids
     ).execute(&*db).await?;
 
     Ok(guild_config)
@@ -41,11 +42,11 @@ pub async fn update_or_create_guild_config(
 ) -> Result<(), Box<dyn StdError>> {
     sqlx::query!(
         "INSERT INTO guild_configs \
-        (id, message_logging_channel_id, autoban_spam_message_threshold, automated_ban_logging_channel_id) \
-        VALUES ($1, $2, $3, $4) \
+        (id, message_logging_channel_id, autoban_spam_message_threshold, automated_ban_logging_channel_id, autoban_exempt_role_ids) \
+        VALUES ($1, $2, $3, $4, $5) \
         ON CONFLICT (id) DO UPDATE \
-        SET message_logging_channel_id = $2, autoban_spam_message_threshold = $3, automated_ban_logging_channel_id = $4",
-        guild_config.id, guild_config.message_logging_channel_id, guild_config.autoban_spam_message_threshold, guild_config.automated_ban_logging_channel_id
+        SET message_logging_channel_id = $2, autoban_spam_message_threshold = $3, automated_ban_logging_channel_id = $4, autoban_exempt_role_ids = $5",
+        guild_config.id, guild_config.message_logging_channel_id, guild_config.autoban_spam_message_threshold, guild_config.automated_ban_logging_channel_id, &guild_config.autoban_exempt_role_ids
     ).execute(&*db).await?;
 
     Ok(())

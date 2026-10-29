@@ -10,7 +10,12 @@ use crate::{
     slash_command,
     subcommand_required,
     guild_only,
-    subcommands("config_message_logging_channel", "config_spam_autoban")
+    subcommands(
+        "config_message_logging_channel",
+        "config_spam_autoban",
+        "config_spam_autoban_exempt_role",
+        "config_spam_autoban_exempt_list"
+    )
 )]
 pub async fn config(_: Context<'_>) -> Result<(), Error> {
     Ok(())
@@ -119,4 +124,100 @@ pub async fn config_spam_autoban(
         .unwrap();
 
     Ok(())
+}
+
+/// Toggle whether a role is exempt from spam auto-bans
+#[poise::command(
+    slash_command,
+    guild_only,
+    rename = "spam_autoban_exempt_role",
+    required_permissions = "ADMINISTRATOR"
+)]
+pub async fn config_spam_autoban_exempt_role(
+    ctx: Context<'_>,
+    #[description = "The role to add to or remove from the exemption list"] role: serenity::Role,
+) -> Result<(), Error> {
+    let guild_id: i64 = ctx.guild_id().unwrap().into();
+    let role_id: i64 = role.id.into();
+
+    let mut db = ctx.data().db.clone();
+
+    let mut guild_config = get_or_create_guild_config(&mut db, guild_id).await.unwrap();
+
+    // Running the command on an already exempt role removes it, otherwise it's added
+    let exempt_role_ids = &mut guild_config.autoban_exempt_role_ids;
+    let now_exempt = if let Some(index) = exempt_role_ids.iter().position(|id| *id == role_id) {
+        exempt_role_ids.remove(index);
+        false
+    } else {
+        exempt_role_ids.push(role_id);
+        true
+    };
+
+    update_or_create_guild_config(&mut db, &guild_config)
+        .await
+        .unwrap();
+
+    ctx.send(
+        poise::CreateReply::default()
+            .content(format!(
+                "{} Users with {} will {} by {}\nExempt roles: {}",
+                YES_EMOJI,
+                role.mention(),
+                if now_exempt {
+                    "no longer be auto-banned for spam"
+                } else {
+                    "now be auto-banned for spam again"
+                },
+                ctx.cache().current_user().mention(),
+                format_role_list(&guild_config.autoban_exempt_role_ids),
+            ))
+            // Don't ping the roles we're listing
+            .allowed_mentions(serenity::CreateAllowedMentions::new()),
+    )
+    .await
+    .unwrap();
+
+    Ok(())
+}
+
+/// View which roles are exempt from spam auto-bans
+#[poise::command(
+    slash_command,
+    guild_only,
+    rename = "spam_autoban_exempt_list",
+    required_permissions = "ADMINISTRATOR"
+)]
+pub async fn config_spam_autoban_exempt_list(ctx: Context<'_>) -> Result<(), Error> {
+    let guild_id: i64 = ctx.guild_id().unwrap().into();
+
+    let mut db = ctx.data().db.clone();
+
+    let guild_config = get_or_create_guild_config(&mut db, guild_id).await.unwrap();
+
+    ctx.send(
+        poise::CreateReply::default()
+            .content(format!(
+                "Roles exempt from spam auto-bans: {}",
+                format_role_list(&guild_config.autoban_exempt_role_ids),
+            ))
+            // Don't ping the roles we're listing
+            .allowed_mentions(serenity::CreateAllowedMentions::new()),
+    )
+    .await
+    .unwrap();
+
+    Ok(())
+}
+
+fn format_role_list(role_ids: &[i64]) -> String {
+    if role_ids.is_empty() {
+        return "none".to_string();
+    }
+
+    role_ids
+        .iter()
+        .map(|role_id| format!("<@&{}>", role_id))
+        .collect::<Vec<_>>()
+        .join(", ")
 }
