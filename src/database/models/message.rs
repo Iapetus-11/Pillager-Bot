@@ -10,20 +10,15 @@ pub struct Message {
     pub guild_id: Option<i64>,
     pub content: String,
     pub created_at: chrono::DateTime<Utc>,
-    pub has_image: bool,
+    pub has_attachment: bool,
 }
 
 impl From<&serenity_prelude::Message> for Message {
     fn from(value: &serenity_prelude::Message) -> Message {
         let guild_id: Option<i64> = value.guild_id.map(|guild_id| guild_id.into());
 
-        // Any image attachment counts, we don't care whether it's the same image as before
-        let has_image = value.attachments.iter().any(|attachment| {
-            attachment
-                .content_type
-                .as_deref()
-                .is_some_and(|content_type| content_type.starts_with("image/"))
-        });
+        // Any attachment counts, regardless of its type or whether it was sent before.
+        let has_attachment = !value.attachments.is_empty();
 
         Message {
             id: value.id.into(),
@@ -32,7 +27,7 @@ impl From<&serenity_prelude::Message> for Message {
             channel_id: value.channel_id.into(),
             content: value.content.clone(),
             created_at: *value.timestamp,
-            has_image,
+            has_attachment,
         }
     }
 }

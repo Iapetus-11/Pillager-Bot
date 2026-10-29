@@ -1,1 +1,0 @@
-ALTER TABLE discord_messages ADD COLUMN has_image BOOLEAN NOT NULL DEFAULT FALSE;
