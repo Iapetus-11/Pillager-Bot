@@ -44,11 +44,10 @@ pub async fn get_recent_user_messages(
     author_id: i64,
     guild_id: i64,
     since: TimeDelta,
-    limit: i64,
 ) -> Result<Vec<Message>, Box<dyn StdError>> {
     Ok(sqlx::query_as!(
         Message,
-        "SELECT * FROM discord_messages WHERE author_id = $1 AND guild_id = $2 AND created_at >= $3 LIMIT $4",
-        author_id, guild_id, (Utc::now() - since), limit,
+        "SELECT * FROM discord_messages WHERE author_id = $1 AND guild_id = $2 AND created_at >= $3",
+        author_id, guild_id, (Utc::now() - since),
     ).fetch_all(&*db).await?)
 }

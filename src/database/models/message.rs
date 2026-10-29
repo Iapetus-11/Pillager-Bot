@@ -17,9 +17,6 @@ impl From<&serenity_prelude::Message> for Message {
     fn from(value: &serenity_prelude::Message) -> Message {
         let guild_id: Option<i64> = value.guild_id.map(|guild_id| guild_id.into());
 
-        // Any attachment counts, regardless of its type or whether it was sent before.
-        let has_attachment = !value.attachments.is_empty();
-
         Message {
             id: value.id.into(),
             author_id: value.author.id.into(),
@@ -27,7 +24,7 @@ impl From<&serenity_prelude::Message> for Message {
             channel_id: value.channel_id.into(),
             content: value.content.clone(),
             created_at: *value.timestamp,
-            has_attachment,
+            has_attachment: !value.attachments.is_empty(),
         }
     }
 }

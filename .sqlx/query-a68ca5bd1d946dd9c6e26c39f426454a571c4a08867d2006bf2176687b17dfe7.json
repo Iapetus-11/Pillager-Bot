@@ -71,12 +71,12 @@
       },
       {
         "ordinal": 6,
-        "name": "has_image",
+        "name": "has_attachment",
         "type_info": "Bool",
         "origin": {
           "Table": {
             "table": "discord_messages",
-            "name": "has_image"
+            "name": "has_attachment"
           }
         }
       }
