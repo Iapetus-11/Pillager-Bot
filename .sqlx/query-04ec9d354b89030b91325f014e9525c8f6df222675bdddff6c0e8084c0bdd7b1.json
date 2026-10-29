@@ -1,0 +1,20 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO discord_messages (id, author_id, channel_id, content, guild_id, created_at, has_attachment) VALUES ($1, $2, $3, $4, $5, $6, $7) ON CONFLICT (id) DO UPDATE SET author_id = $2, channel_id = $3, content = $4, guild_id = $5, created_at = $6, has_attachment = $7",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int8",
+        "Int8",
+        "Int8",
+        "Varchar",
+        "Int8",
+        "Timestamptz",
+        "Bool"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "04ec9d354b89030b91325f014e9525c8f6df222675bdddff6c0e8084c0bdd7b1"
+}

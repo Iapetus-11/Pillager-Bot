@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "SELECT * FROM discord_messages WHERE author_id = $1 AND guild_id = $2 AND created_at >= $3 LIMIT $4",
+  "query": "SELECT * FROM discord_messages WHERE author_id = $1 AND guild_id = $2 AND created_at >= $3",
   "describe": {
     "columns": [
       {
@@ -68,14 +68,24 @@
             "name": "created_at"
           }
         }
+      },
+      {
+        "ordinal": 6,
+        "name": "has_attachment",
+        "type_info": "Bool",
+        "origin": {
+          "Table": {
+            "table": "discord_messages",
+            "name": "has_attachment"
+          }
+        }
       }
     ],
     "parameters": {
       "Left": [
         "Int8",
         "Int8",
-        "Timestamptz",
-        "Int8"
+        "Timestamptz"
       ]
     },
     "nullable": [
@@ -84,8 +94,9 @@
       false,
       false,
       true,
+      false,
       false
     ]
   },
-  "hash": "5268b2fc3bd4ed78274c7a38569fee5b98e3fb4911bac6ec7ee3e4062a2d6acf"
+  "hash": "4bff5ec5b5b0b76919d6e039559c11444a7c608016bea190895aeb91f818f1ad"
 }
