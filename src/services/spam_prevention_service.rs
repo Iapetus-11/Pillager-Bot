@@ -29,7 +29,7 @@ pub async fn spam_detection_and_handling(
     let link_found = link_regex.find(&message.content).is_some();
     let discord_invite_found = discord_invite_regex.find(&message.content).is_some();
 
-    if !(link_found || discord_invite_found) {
+    if !(link_found || discord_invite_found || message.has_attachment) {
         return Ok(());
     }
 
@@ -45,11 +45,12 @@ pub async fn spam_detection_and_handling(
         guild_config.autoban_spam_message_threshold.unwrap() as i32;
 
     let author_messages =
-        get_recent_user_messages(db, message.author_id, guild_id, TimeDelta::minutes(5), 50)
+        get_recent_user_messages(db, message.author_id, guild_id, TimeDelta::minutes(3))
             .await
             .unwrap();
     let mut messages_with_links_count = 0;
     let mut messages_with_discord_invite_count = 0;
+    let mut messages_with_attachments_count = 0;
 
     for other_message in author_messages {
         if discord_invite_regex.find(&other_message.content).is_some() {
@@ -57,10 +58,14 @@ pub async fn spam_detection_and_handling(
         } else if link_regex.find(&other_message.content).is_some() {
             messages_with_links_count += 1;
         }
+        if other_message.has_attachment {
+            messages_with_attachments_count += 1;
+        }
     }
 
-    if (messages_with_discord_invite_count + messages_with_links_count)
-        < autoban_spam_message_threshold
+    if messages_with_discord_invite_count < autoban_spam_message_threshold
+        && messages_with_links_count < autoban_spam_message_threshold
+        && messages_with_attachments_count < autoban_spam_message_threshold
     {
         return Ok(());
     }
@@ -83,7 +88,7 @@ pub async fn spam_detection_and_handling(
                     "fields": [
                         {
                             "name": "Reason",
-                            "value": format!("Exceeded {} spam messages over 5 minutes", autoban_spam_message_threshold),
+                            "value": format!("Exceeded {} spam messages (links/invites/attachments) over 3 minutes", autoban_spam_message_threshold),
                         },
                         {
                             "name": "User",

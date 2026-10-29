@@ -1,0 +1,1 @@
+ALTER TABLE discord_messages ADD COLUMN has_attachment BOOLEAN NOT NULL DEFAULT FALSE;

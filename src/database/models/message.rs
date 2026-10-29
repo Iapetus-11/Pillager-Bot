@@ -10,6 +10,7 @@ pub struct Message {
     pub guild_id: Option<i64>,
     pub content: String,
     pub created_at: chrono::DateTime<Utc>,
+    pub has_attachment: bool,
 }
 
 impl From<&serenity_prelude::Message> for Message {
@@ -23,6 +24,7 @@ impl From<&serenity_prelude::Message> for Message {
             channel_id: value.channel_id.into(),
             content: value.content.clone(),
             created_at: *value.timestamp,
+            has_attachment: !value.attachments.is_empty(),
         }
     }
 }
